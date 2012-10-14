@@ -137,7 +137,7 @@ namespace WindowsStoreSockets
                 reader.InputStreamOptions = InputStreamOptions.Partial;
                 DataWriter writer = new DataWriter(socket.OutputStream);
 
-                string request = "Are you noño? Can you tell me the time?\r\n";
+                string request = "Are you ñoño? Can you tell me what time is it?\r\n";
 
                 writer.WriteString(request);
                 uint bytesWritten = await writer.StoreAsync();

@@ -77,11 +77,14 @@ namespace DesktopSockets
                     string request = "";
                     while (!request.EndsWith("\r\n"))
                     {
+                        // If connection is closed before this call, "IOException: Unable to read data from the
+                        // transport connection: An existing connection was forcibly closed by the remote host.
+                        // (-2146232800)" exception is thrown.
                         int bytesRead = networkStream.Read(buffer, 0, buffer.Length);
                         if (bytesRead == 0)
                         {
                             // If bytesRead is zero, incoming stream was closed.
-                            Console.WriteLine("{0} incoming stream closed.", client.RemoteEndPoint);
+                            Console.WriteLine("{0} disconnected.", client.RemoteEndPoint); 
                             return;
                         }
                         request += Encoding.UTF8.GetString(buffer, 0, bytesRead);
@@ -95,10 +98,9 @@ namespace DesktopSockets
                     networkStream.Write(buffer, 0, buffer.Length);
                 }
             }
-            //catch (IOException)
-            finally
+            catch (IOException)
             {
-                Console.WriteLine("{0} disconnected.", client.RemoteEndPoint);
+                Console.WriteLine("{0} disconnected in a rude way.", client.RemoteEndPoint);
             }
         }
 
@@ -110,7 +112,7 @@ namespace DesktopSockets
 
                 NetworkStream networkStream = new NetworkStream(socket);
 
-                string request = "Are you noño? Can you tell me the time?\r\n";
+                string request = "Are you ñoño? Can you tell me what time is it?\r\n";
                 byte[] buffer = Encoding.UTF8.GetBytes(request);
                 networkStream.Write(buffer, 0, buffer.Length);
 

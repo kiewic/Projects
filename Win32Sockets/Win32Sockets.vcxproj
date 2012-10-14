@@ -77,6 +77,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TcpClient.cpp" />
+    <ClCompile Include="TcpServer.cpp" />
+    <ClCompile Include="UdpReceive.cpp" />
+    <ClCompile Include="UdpSend.cpp" />
     <ClCompile Include="Win32SocketsMain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
