@@ -57,7 +57,7 @@ namespace DesktopSockets
             {
                 using (Socket client = socket.Accept())
                 {
-                    // We cna improve this making it multithreading.
+                    // We can improve this making it multithreading.
                     OnConnectionReceived(client);
                 }
             }

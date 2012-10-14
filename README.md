@@ -1,4 +1,8 @@
 SocketsSockets
 ==============
 
-A project about a lot of sockets.
+A project about sockets.
+
+http://kiewic.com/sockets
+
+

@@ -2,6 +2,12 @@
 #include <string.h>
 #include <WinSock2.h>
 
+// RtlIpv6StringToAddress
+#include <mstcpip.h>
+
+// sockaddr_in6
+#include <ws2tcpip.h>
+
 // Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -64,7 +70,6 @@ int InitializeWinsock()
     int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (result != 0)
     {
-        // %#8x is for hexadecimal output.
         wprintf(L"WSAStartup failed with error %d\n", WSAGetLastError());
     }
     return result;
@@ -83,8 +88,8 @@ void DoTcpClient()
 int DoUdpReceive()
 {
     SOCKET recvSocket;
-    struct sockaddr_in recvAddr;
-    struct sockaddr_in senderAddr;
+    struct sockaddr_in6 recvAddr;
+    struct sockaddr_in6 senderAddr;
     int senderAddrSize = sizeof(senderAddr);
 
     //char* sourceIp = "0.0.0.0";
@@ -100,21 +105,23 @@ int DoUdpReceive()
 
     int result;
 
-    // Create socket.
-    recvSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0);
-    if (recvSocket == INVALID_SOCKET)
+    // Set source address.
+    recvAddr.sin6_family = AF_INET6;
+    recvAddr.sin6_addr = in6addr_any; // TODO: find a replacement for htonl(INADDR_ANY);
+    recvAddr.sin6_flowinfo = NULL;
+    recvAddr.sin6_scope_struct.Value = 0;
+    recvAddr.sin6_port = htons((u_short)atoi(sourcePort));
+    if (recvAddr.sin6_port == 0)
     {
-        wprintf(L"WSASocket failed with error %d\n", WSAGetLastError());
+        wprintf(L"Source port must be a legal UDP port.\n", WSAGetLastError());
         return 1;
     }
 
-    // Set source address.
-    recvAddr.sin_family = AF_INET;
-    recvAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    recvAddr.sin_port = htons((u_short)atoi(sourcePort));
-    if (recvAddr.sin_port == 0)
+    // Create socket.
+    recvSocket = WSASocket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0);
+    if (recvSocket == INVALID_SOCKET)
     {
-        wprintf(L"Source port must be a legal UDP port.\n", WSAGetLastError());
+        wprintf(L"WSASocket failed with error %d\n", WSAGetLastError());
         return 1;
     }
 
@@ -153,8 +160,8 @@ int DoUdpReceive()
     int charsWritten = MultiByteToWideChar(
         CP_UTF8,
         0, // flags
-        recvBuffer, // sring to convert
-        -1, // -1 if string is null-terminated
+        recvBuffer, // string to convert
+        bytesRecv, // size in bytes, -1 if string is null-terminated
         message, // buffer for converted string
         messageLength); // size of buffer
     if (charsWritten == 0)
@@ -162,6 +169,7 @@ int DoUdpReceive()
         wprintf(L"MultiByteToWideChar failed with error %d\n", WSAGetLastError());
         return 1;
     }
+    message[charsWritten] = '\0';
 
     // TODO: write where the message comes from.
     wprintf(L"Message received: %s\n", message);
@@ -175,15 +183,11 @@ int DoUdpReceive()
 int DoUdpSend()
 {
     SOCKET sendSocket;
-    struct sockaddr_in sendAddr;
+    struct sockaddr_in6 sendAddr;
     int sendAddrSize = sizeof(sendAddr);
 
-    //u_short port = 2704;
-    //struct hostent *localHost;
-    //char *ip;
-
-    //char *targetIp = "::1";
-    char* targetIp = "127.0.0.1";
+    wchar_t *targetIp = L"::1";
+    //char* targetIp = "127.0.0.1";
     char* targetPort = "2704";
 
     WSABUF wsaBuffer;
@@ -195,32 +199,31 @@ int DoUdpSend()
 
     int result;
 
-    // TODO: Use IPv6 sockets (AF_INET6)
-    sendSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0);
+    // Set target address.
+    result = WSAStringToAddress(targetIp, AF_INET6, NULL, (LPSOCKADDR)&sendAddr, &sendAddrSize);
+    if (result == SOCKET_ERROR)
+    {
+        wprintf(L"WSAStringToAddress failed with error %d\n", WSAGetLastError());
+        return 1;
+    }
+    sendAddr.sin6_port = htons((u_short)atoi(targetPort));
+    if (sendAddr.sin6_port == 0)
+    {
+        wprintf(L"Target port must be a legal UDP port.\n", WSAGetLastError());
+        return 1;
+    }
+
+    // Create socket.
+    sendSocket = WSASocket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP, NULL, 0, 0);
     if (sendSocket == INVALID_SOCKET)
     {
         wprintf(L"WSASocket failed with error %d\n", WSAGetLastError());
         return 1;
     }
 
-    // Set target address.
-    sendAddr.sin_family = AF_INET;
-    sendAddr.sin_addr.s_addr = inet_addr(targetIp);
-    if (sendAddr.sin_addr.s_addr == INADDR_NONE)
-    {
-        wprintf(L"Target ip address must be an IPv4 address.\n", WSAGetLastError());
-        return 1;
-    }
-    sendAddr.sin_port = htons((u_short)atoi(targetPort));
-    if (sendAddr.sin_port == 0)
-    {
-        wprintf(L"Target port must be a legal UDP port.\n", WSAGetLastError());
-        return 1;
-    }
-
     // Convert message from unicode to UTF-8.
     // I think char is ISO-8859-1 and wchart_t is little-endian UTF-16.
-    int bytesWritten = WideCharToMultiByte(
+    int utf8BufferLength = WideCharToMultiByte(
         CP_UTF8,
         0, // flags
         message, // unicode string to convert
@@ -229,7 +232,7 @@ int DoUdpSend()
         sendBufferLength, // size of buffer
         NULL, // default char
         NULL); // used default char inidcator
-    if (bytesWritten == 0)
+    if (utf8BufferLength == 0)
     {
         wprintf(L"WideCharToMultiByte failed with error %d\n", WSAGetLastError());
         return 1;
@@ -237,7 +240,7 @@ int DoUdpSend()
 
     // WSABUF structure containing a pointer to the buffer and the length of the buffer.
     wsaBuffer.buf = sendBuffer;
-    wsaBuffer.len = sendBufferLength;
+    wsaBuffer.len = utf8BufferLength;
 
     // Send message.
     result = WSASendTo(
