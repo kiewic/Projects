@@ -1,0 +1,32 @@
+﻿<Page
+    x:Class="SocketsSockets.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SocketsSockets"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="StartServer" Content="Start Server" Click="StartServer_Click_1" />
+            <Button x:Name="StopServer" Content="Stop Server" Click="StopServer_Click_1" />
+        </StackPanel>
+        <TextBlock x:Name="TcpServerOutput" />
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="ConnectClient" Content="Connect Client" Click="ConnectClient_Click_1" />
+            <Button x:Name="SendRequest" Content="Send Request" Click="SendRequest_Click_1" />
+            <Button x:Name="DisconnectClient" Content="Disconnect Client" Click="DisconnectClient_Click_1" />
+        </StackPanel>
+        <TextBlock x:Name="TcpClientOutput" />
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="ConnectUdpReceive" Content="Connect UDP Receive" Click="ConnectUdpReceive_Click_1" />
+            <Button x:Name="DisconnectUdpReceive" Content="Disconnect UDP Receive" Click="DisconnectUdpReceive_Click_1" />
+        </StackPanel>
+        <TextBlock x:Name="UdpReceiveOutput" />
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="UdpSend" Content="UDP Send" Click="UdpSend_Click_1" />
+        </StackPanel>
+        <TextBlock x:Name="UdpSendOutput" />
+    </StackPanel>
+</Page>
