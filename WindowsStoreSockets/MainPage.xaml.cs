@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace SocketsSockets
+namespace WindowsStoreSockets
 {
     public sealed partial class MainPage : Page
     {
@@ -28,11 +28,6 @@ namespace SocketsSockets
             this.InitializeComponent();
         }
 
-        /// <summary>
-        /// Invoked when this page is about to be displayed in a Frame.
-        /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.  The Parameter
-        /// property is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
         }
@@ -69,7 +64,7 @@ namespace SocketsSockets
                 reader.InputStreamOptions = InputStreamOptions.Partial;
                 DataWriter writer = new DataWriter(args.Socket.OutputStream);
 
-                DisplayOutput(TcpServerOutput,args.Socket.Information.RemoteAddress.DisplayName +
+                DisplayOutput(TcpServerOutput, args.Socket.Information.RemoteAddress.DisplayName +
                     " connected.");
 
                 while (true)
@@ -121,6 +116,7 @@ namespace SocketsSockets
         //
         // TCP client.
         //
+
         private StreamSocket socket = null;
         private Uri uri = null;
 
@@ -200,9 +196,13 @@ namespace SocketsSockets
                 receiveSocket = new DatagramSocket();
 
                 // MessageReceived handler must be set before BindServiceAsync is called, if not
-                // "A method was called at an unexpected time. (Exception from HRESULT: 0x8000000E)" error occurs.
+                // "A method was called at an unexpected time. (Exception from HRESULT: 0x8000000E)" exception is
+                // thrown.
                 receiveSocket.MessageReceived += OnMessageReceived;
 
+                // If port is already in used by another socket, "Only one usage of each socket address
+                // (protocol/network address/port) is normally permitted. (Exception from HRESULT: 0x80072740)"
+                // exception is thrown.
                 await receiveSocket.BindServiceNameAsync("2704");
 
                 DisplayOutput(UdpReceiveOutput, "Connected (bound).");
@@ -227,7 +227,8 @@ namespace SocketsSockets
             uint bytesRead = reader.UnconsumedBufferLength;
             string message = reader.ReadString(bytesRead);
 
-            DisplayOutput(UdpReceiveOutput, message);
+            DisplayOutput(UdpReceiveOutput, "Message received from [" + args.RemoteAddress.DisplayName + "]:" +
+                args.RemotePort + ": " + message);
         }
 
         //
@@ -253,15 +254,15 @@ namespace SocketsSockets
             // exepction.
             uint bytesWritten = await writer.StoreAsync();
 
-            DisplayOutput(UdpSendOutput, "Message sent.");
+            DisplayOutput(UdpSendOutput, "Message sent: " + message);
         }
 
         private void socket_MessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
             try
             {
-                // If remote peer didn't received message, exception {"An existing connection was forcibly closed by the
-                // remote host. (Exception from HRESULT: 0x80072746)" is thrown.
+                // If remote peer didn't received message, "An existing connection was forcibly closed by the
+                // remote host. (Exception from HRESULT: 0x80072746)" exception is thrown.
                 uint bytesRead = args.GetDataReader().UnconsumedBufferLength;
             }
             catch (Exception)

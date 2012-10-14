@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="1fa95edc-9d46-4041-ac21-65b0b4ca6987" Publisher="CN=Gilberto" Version="1.0.0.0" />
+  <Identity Name="f44ddd73-9afd-44fb-bcf1-2744ea488b35" Publisher="CN=Gilberto" Version="1.0.0.0" />
   <Properties>
-    <DisplayName>SocketsSockets</DisplayName>
+    <DisplayName>WindowsStoreSockets</DisplayName>
     <PublisherDisplayName>Gilberto</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -14,8 +14,8 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SocketsSockets.App">
-      <VisualElements DisplayName="SocketsSockets" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="SocketsSockets" ForegroundText="light" BackgroundColor="#464646">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="WindowsStoreSockets.App">
+      <VisualElements DisplayName="Windows Store Sockets" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="WindowsStoreSockets" ForegroundText="light" BackgroundColor="#464646">
         <DefaultTile ShowName="allLogos" />
         <SplashScreen Image="Assets\SplashScreen.png" />
       </VisualElements>

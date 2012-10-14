@@ -4,15 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ACC7EED0-D520-4667-9FE4-CEEDE19EDA4C}</ProjectGuid>
+    <ProjectGuid>{173FCEB2-258F-4855-B638-3ED15A8EDB53}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SocketsSockets</RootNamespace>
-    <AssemblyName>SocketsSockets</AssemblyName>
+    <RootNamespace>WindowsStoreSockets</RootNamespace>
+    <AssemblyName>WindowsStoreSockets</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>SocketsSockets_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>WindowsStoreSockets_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -115,8 +115,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="ClassDiagram1.cd" />
-    <None Include="SocketsSockets_TemporaryKey.pfx" />
+    <None Include="WindowsStoreSockets_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.png" />
