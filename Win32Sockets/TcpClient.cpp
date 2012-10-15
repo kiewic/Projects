@@ -46,7 +46,12 @@ int DoTcpClient()
     }
 
     // Enable IPv4 and IPv6.
-    result = setsockopt(clientSocket, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&ipv6only, sizeof(ipv6only));
+    result = setsockopt(
+        clientSocket,
+        IPPROTO_IPV6,
+        IPV6_V6ONLY,
+        (char*)&ipv6only,
+        sizeof(ipv6only));
     if (result == SOCKET_ERROR)
     {
         wprintf(L"setsockopt failed with error %d\n", WSAGetLastError());
@@ -102,9 +107,9 @@ int DoTcpClient()
     utf8BufferLength -= 1;
 
     // Send request.
-    // The difference between WSA functions and standard fnctions (e.g. WSASaned() and send() is that WSA functions
-    // allow to use overlapped IO (non-blocking sockets) and also they allow sending/receiving mmultiple buffers
-    // which can save you some copying memory work.
+    // The difference between WSA functions and standard functions (e.g. WSASaned() and send() is
+    // that WSA functions allow to use overlapped IO (non-blocking sockets) and also they allow
+    // sending/receiving mmultiple buffers which can save you some copying memory work.
     wsaBuffer.buf = buffer;
     wsaBuffer.len = utf8BufferLength;
     result = WSASend(clientSocket, &wsaBuffer, 1, &bytesSent, 0, NULL, NULL);
@@ -120,7 +125,9 @@ int DoTcpClient()
     wsaBuffer.buf = recvBuffer;
     wsaBuffer.len = recvBufferLength;
     totalBytesRecv = 0;
-    while (totalBytesRecv < 2 || (buffer[totalBytesRecv - 2] != '\r' || buffer[totalBytesRecv - 1] != '\n'))
+    while (totalBytesRecv < 2 || 
+        buffer[totalBytesRecv - 2] != '\r' ||
+        buffer[totalBytesRecv - 1] != '\n')
     {
         result = WSARecv(clientSocket, &wsaBuffer, 1, &bytesRecv, &flags, NULL, NULL);
         if (result == SOCKET_ERROR)

@@ -44,7 +44,12 @@ int DoTcpServer()
     }
 
     // Enable IPv4 and IPv6.
-    result = setsockopt(listenSocket, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&ipv6only, sizeof(ipv6only));
+    result = setsockopt(
+        listenSocket,
+        IPPROTO_IPV6,
+        IPV6_V6ONLY,
+        (char*)&ipv6only,
+        sizeof(ipv6only));
     if (result == SOCKET_ERROR)
     {
         wprintf(L"setsockopt failed with error %d\n", WSAGetLastError());
@@ -70,9 +75,9 @@ int DoTcpServer()
     if (result == SOCKET_ERROR)
     {
         // If localAddr is not properly initialized:
-        // "WSAEAFNOSUPPORT (10047): Address family not supported by protocol family." error occurs.
+        // "WSAEAFNOSUPPORT (10047): Address family not supported by protocol family." error.
         // If port is already in use:
-        // "WSAEADDRINUSE (10048): Address already in use." error occurs.
+        // "WSAEADDRINUSE (10048): Address already in use." error. 
         wprintf(L"bind failed with error %d\n", WSAGetLastError());
         closesocket(listenSocket);
         return 1;

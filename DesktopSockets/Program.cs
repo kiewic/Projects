@@ -41,16 +41,19 @@ namespace DesktopSockets
 
         private static void PrintHelp()
         {
-            Console.WriteLine("Usage: {0} tcp {{ server | client }}", Environment.GetCommandLineArgs()[0]);
-            Console.WriteLine("Usage: {0} udp {{ send | receive }}", Environment.GetCommandLineArgs()[0]);
+            Console.WriteLine("Usage: {0} tcp {{ server | client }}",
+                Environment.GetCommandLineArgs()[0]);
+            Console.WriteLine("Usage: {0} udp {{ send | receive }}",
+                Environment.GetCommandLineArgs()[0]);
         }
 
         private static void DoTcpServer()
         {
             Socket listenSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 
-            // Is socket is already taken, "SocketException: Only one usage of each socket address (protocol/network
-            // address/port) is normally permitted (-2147467259)" is thrown.
+            // Is socket is already taken, "SocketException: Only one usage of each socket
+            // address (protocol/network address/port) is normally permitted (-2147467259)" is
+            // thrown.
             listenSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, 80));
             listenSocket.Listen(5);
             while (true)
@@ -77,9 +80,9 @@ namespace DesktopSockets
                     string request = "";
                     while (!request.EndsWith("\r\n"))
                     {
-                        // If connection is closed before this call, "IOException: Unable to read data from the
-                        // transport connection: An existing connection was forcibly closed by the remote host.
-                        // (-2146232800)" exception is thrown.
+                        // If connection is closed before this call, "IOException: Unable to read
+                        // data from the transport connection: An existing connection was forcibly
+                        // closed by the remote host. (-2146232800)" is thrown.
                         int bytesRead = networkStream.Read(buffer, 0, buffer.Length);
                         if (bytesRead == 0)
                         {
@@ -94,7 +97,8 @@ namespace DesktopSockets
                     string response = "Yes, I am ñoño. The time is " + DateTime.Now + ".\r\n";
                     buffer = Encoding.UTF8.GetBytes(response);
 
-                    // If Write() is called multiple times, response may be sent in multiple TCP packets.
+                    // If Write() is called multiple times, response may be sent in multiple TCP
+                    // packets.
                     networkStream.Write(buffer, 0, buffer.Length);
                 }
             }
@@ -125,7 +129,8 @@ namespace DesktopSockets
                     if (bytesRead == 0)
                     {
                         // If bytesRead is zero, incoming stream was closed.
-                        Console.WriteLine("Incoming stream from {0} closed.", socket.RemoteEndPoint);
+                        Console.WriteLine("Incoming stream from {0} closed.",
+                            socket.RemoteEndPoint);
                         return;
                     }
                     response += Encoding.UTF8.GetString(buffer, 0, bytesRead);
@@ -138,7 +143,8 @@ namespace DesktopSockets
 
         private static void ConnectSocket(Socket socket, string hostname, int port)
         {
-            // If host is unknown, "SocketException: No such host is known (-2147467259)" is thrown.
+            // If host is unknown, "SocketException: No such host is known (-2147467259)" is
+            // thrown.
             IPHostEntry host = Dns.GetHostEntry(hostname);
 
             for (int i = 0; i < host.AddressList.Length; i++)
@@ -151,8 +157,8 @@ namespace DesktopSockets
                 }
                 catch (SocketException ex)
                 {
-                    // If remote host does not reply, "SocketException: No connection could be made because the target
-                    // machine actively  refused it (-2147467259)" is thrown.
+                    // If remote host does not reply, "SocketException: No connection could be made
+                    // because the target machine actively  refused it (-2147467259)" is thrown.
                     if (ex.HResult == -2147467259 && i + 1 != host.AddressList.Length)
                     {
                         continue;
@@ -166,8 +172,9 @@ namespace DesktopSockets
         {
             using (Socket udpSocket = new Socket(SocketType.Dgram, ProtocolType.Udp))
             {
-                // If port is already taken, "SocketException: Only one usage of each socket address (protocol/network
-                // address/port) is normally permitted (-2147467259)" is thrown.
+                // If port is already taken, "SocketException: Only one usage of each socket
+                // address (protocol/network address/port) is normally permitted (-2147467259)"
+                // is thrown.
                 udpSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, 2704));
 
                 while (true)
