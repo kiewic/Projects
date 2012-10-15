@@ -120,7 +120,9 @@ int DoTcpServer()
     wsaBuffer.buf = recvBuffer;
     wsaBuffer.len = recvBufferLength;
     totalBytesRecv = 0;
-    while (totalBytesRecv < 2 || (buffer[totalBytesRecv - 2] != '\r' || buffer[totalBytesRecv - 1] != '\n'))
+    while (totalBytesRecv < 2 ||
+        buffer[totalBytesRecv - 2] != '\r' ||
+        buffer[totalBytesRecv - 1] != '\n')
     {
         result = WSARecv(acceptSocket, &wsaBuffer, 1, &bytesRecv, &flags, NULL, NULL);
         if (result == SOCKET_ERROR)
