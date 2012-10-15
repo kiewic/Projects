@@ -47,15 +47,15 @@ namespace DesktopSockets
 
         private static void DoTcpServer()
         {
-            Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            Socket listenSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 
             // Is socket is already taken, "SocketException: Only one usage of each socket address (protocol/network
             // address/port) is normally permitted (-2147467259)" is thrown.
-            socket.Bind(new IPEndPoint(IPAddress.IPv6Any, 80));
-            socket.Listen(5);
+            listenSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, 80));
+            listenSocket.Listen(5);
             while (true)
             {
-                using (Socket client = socket.Accept())
+                using (Socket client = listenSocket.Accept())
                 {
                     // We can improve this making it multithreading.
                     OnConnectionReceived(client);

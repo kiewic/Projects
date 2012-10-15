@@ -94,13 +94,14 @@ int DoTcpClient()
     if (utf8BufferLength == 0)
     {
         wprintf(L"WideCharToMultiByte failed with error %d\n", WSAGetLastError());
+        closesocket(clientSocket);
         return 1;
     }
 
     // Do not send the null character.
     utf8BufferLength -= 1;
 
-    // Send.
+    // Send request.
     // The difference between WSA functions and standard fnctions (e.g. WSASaned() and send() is that WSA functions
     // allow to use overlapped IO (non-blocking sockets) and also they allow sending/receiving mmultiple buffers
     // which can save you some copying memory work.
@@ -114,7 +115,7 @@ int DoTcpClient()
         return 1;
     }
 
-    // Receive.
+    // Receive response.
     // The data received must finish with "\r\n".
     wsaBuffer.buf = recvBuffer;
     wsaBuffer.len = recvBufferLength;
@@ -152,6 +153,7 @@ int DoTcpClient()
     if (charsWritten == 0)
     {
         wprintf(L"MultiByteToWideChar failed with error %d\n", WSAGetLastError());
+        closesocket(clientSocket);
         return 1;
     }
 

@@ -27,7 +27,7 @@ int DoUdpReceive()
 
     // Set source address.
     recvAddr.sin6_family = AF_INET6;
-    recvAddr.sin6_addr = in6addr_any; // TODO: find a replacement for htonl(INADDR_ANY);
+    recvAddr.sin6_addr = in6addr_any; // TODO: Find a replacement for htonl(INADDR_ANY);
     recvAddr.sin6_flowinfo = NULL;
     recvAddr.sin6_scope_struct.Value = 0;
     recvAddr.sin6_port = htons((u_short)atoi(sourcePort));
@@ -47,14 +47,15 @@ int DoUdpReceive()
 
     // Bind socket.
     result = bind(recvSocket, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
-    if (result != 0)
+    if (result == SOCKET_ERROR)
     {
         wprintf(L"bind failed with error %d\n", WSAGetLastError());
         closesocket(recvSocket);
         return 1;
     }
 
-    // TODO: receive multiple messages.
+    // TODO: Receive multiple messages.
+
     // Receive message.
     wsaBuffer.len = recvBufferLength;
     wsaBuffer.buf = recvBuffer;
@@ -87,13 +88,14 @@ int DoUdpReceive()
     if (charsWritten == 0)
     {
         wprintf(L"MultiByteToWideChar failed with error %d\n", WSAGetLastError());
+        closesocket(recvSocket);
         return 1;
     }
 
     // Message received is not null-temrinated, add null character.
     recvMessage[charsWritten] = '\0';
 
-    // TODO: write where the message comes from.
+    // TODO: Write where the message comes from.
     wprintf(L"Message received: %s\n", recvMessage);
 
     // Close.
