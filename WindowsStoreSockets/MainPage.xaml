@@ -12,21 +12,21 @@
             <Button x:Name="StartServer" Content="Start Server" Click="StartServer_Click_1" />
             <Button x:Name="StopServer" Content="Stop Server" Click="StopServer_Click_1" />
         </StackPanel>
-        <TextBlock x:Name="TcpServerOutput" />
+        <TextBlock x:Name="TcpServerOutput" IsTextSelectionEnabled="True" />
         <StackPanel Orientation="Horizontal">
             <Button x:Name="ConnectClient" Content="Connect Client" Click="ConnectClient_Click_1" />
             <Button x:Name="SendRequest" Content="Send Request" Click="SendRequest_Click_1" />
             <Button x:Name="DisconnectClient" Content="Disconnect Client" Click="DisconnectClient_Click_1" />
         </StackPanel>
-        <TextBlock x:Name="TcpClientOutput" />
+        <TextBlock x:Name="TcpClientOutput" IsTextSelectionEnabled="True" />
         <StackPanel Orientation="Horizontal">
             <Button x:Name="ConnectUdpReceive" Content="Connect UDP Receive" Click="ConnectUdpReceive_Click_1" />
             <Button x:Name="DisconnectUdpReceive" Content="Disconnect UDP Receive" Click="DisconnectUdpReceive_Click_1" />
         </StackPanel>
-        <TextBlock x:Name="UdpReceiveOutput" />
+        <TextBlock x:Name="UdpReceiveOutput" IsTextSelectionEnabled="True" />
         <StackPanel Orientation="Horizontal">
             <Button x:Name="UdpSend" Content="UDP Send" Click="UdpSend_Click_1" />
         </StackPanel>
-        <TextBlock x:Name="UdpSendOutput" />
+        <TextBlock x:Name="UdpSendOutput" IsTextSelectionEnabled="True" />
     </StackPanel>
 </Page>

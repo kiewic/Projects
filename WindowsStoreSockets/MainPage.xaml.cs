@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking;
@@ -16,6 +18,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -44,18 +47,29 @@ namespace WindowsStoreSockets
 
         private async void StartServer_Click_1(object sender, RoutedEventArgs e)
         {
-            listener = new StreamSocketListener();
+            try
+            {
+                // We call it 'local', becuase if this connection doesn't succeed, we do not want
+                // to loose the possible previous conneted listener.
+                StreamSocketListener localListener = new StreamSocketListener();
 
-            // ConnectionReceived handler must be set before BindServiceNameAsync is called, if not
-            // "A method was called at an unexpected time. (Exception from HRESULT: 0x8000000E)"
-            // error occurs.
-            listener.ConnectionReceived += OnConnectionReceived;
+                // ConnectionReceived handler must be set before BindServiceNameAsync is called, if not
+                // "A method was called at an unexpected time. (Exception from HRESULT: 0x8000000E)"
+                // error occurs.
+                localListener.ConnectionReceived += OnConnectionReceived;
 
-            // Trying to bind more than once to the same port throws "Only one usage of each socket
-            // address (protocol/network address/port) is normally permitted. (Exception from
-            // HRESULT: 0x80072740)" exception.
-            await listener.BindServiceNameAsync("80");
-            DisplayOutput(TcpServerOutput, "Listening.");
+                // Trying to bind more than once to the same port throws "Only one usage of each socket
+                // address (protocol/network address/port) is normally permitted. (Exception from
+                // HRESULT: 0x80072740)" exception.
+                await localListener.BindServiceNameAsync("80");
+                DisplayOutput(TcpServerOutput, "Listening.");
+
+                listener = localListener;
+            }
+            catch (Exception ex)
+            {
+                DisplayOutput(TcpServerOutput, ex.ToString());
+            }
         }
 
         private async void OnConnectionReceived(
@@ -64,41 +78,27 @@ namespace WindowsStoreSockets
         {
             try
             {
-                DataReader reader = new DataReader(args.Socket.InputStream);
-                reader.InputStreamOptions = InputStreamOptions.Partial;
-                DataWriter writer = new DataWriter(args.Socket.OutputStream);
-
                 DisplayOutput(TcpServerOutput, args.Socket.Information.RemoteAddress.DisplayName +
                     " connected.");
 
                 while (true)
                 {
                     // Read request.
-                    string request = "";
-                    while (!request.EndsWith("\r\n"))
-                    {
-                        // Read bytes in multiples of 16 to make it more fun.
-                        uint bytesRead = await reader.LoadAsync(16);
-                        if (bytesRead == 0)
-                        {
-                            // If bytesRead is zero, incoming stream was closed.
-                            DisplayOutput(TcpServerOutput, "The client is gone.");
-                            return;
-                        }
-                        request += reader.ReadString(bytesRead);
-                    }
+                    string request = await ReadUntilCrLf(args.Socket.InputStream, TcpServerOutput);
                     DisplayOutput(TcpServerOutput, request);
+
+                    if (String.IsNullOrEmpty(request))
+                    {
+                        // If there was no request. The remote host closed the connection.
+                        return;
+                    }
 
                     // Send response.
                     string response = "Yes, I am ñoño. The time is " + DateTime.Now + ".\r\n";
 
-                    // This is useless in this sample.
-                    uint responseLength = writer.MeasureString(response);
-
-                    writer.WriteString(response);
-                    uint bytesWritten = await writer.StoreAsync();
-
-                    Debug.Assert(bytesWritten == responseLength);
+                    // In this sample since the server doesn´t close the close the socket, we
+                    // could do it async (i.e. without await).
+                    await Send(args.Socket.OutputStream, response);
                 }
             }
             catch (Exception ex)
@@ -125,52 +125,28 @@ namespace WindowsStoreSockets
 
         private async void ConnectClient_Click_1(object sender, RoutedEventArgs e)
         {
-            socket = new StreamSocket();
+            try
+            {
+                socket = new StreamSocket();
 
-            await socket.ConnectAsync(new HostName("localhost"), "80");
-            DisplayOutput(TcpClientOutput, "Connected.");
+                await socket.ConnectAsync(new HostName("localhost"), "80");
+                DisplayOutput(TcpClientOutput, "Connected.");
+            }
+            catch (Exception ex)
+            {
+                DisplayOutput(TcpClientOutput, ex.ToString());
+            }
         }
 
         private async void SendRequest_Click_1(object sender, RoutedEventArgs e)
         {
             if (socket != null)
             {
-                DataReader reader = new DataReader(socket.InputStream);
-                reader.InputStreamOptions = InputStreamOptions.Partial;
-                DataWriter writer = new DataWriter(socket.OutputStream);
-
                 string request = "Are you ñoño? Can you tell me what time is it?\r\n";
+                await Send(socket.OutputStream, request);
 
-                writer.WriteString(request);
-                uint bytesWritten = await writer.StoreAsync();
-
-                // Why DataReader doesn't have ReadChar()?
-                string response = "";
-                while (!response.EndsWith("\r\n"))
-                {
-                    // Read bytes in multiples of 16, to make it more fun.
-                    // If the socket is closed while we are reading, the "The I/O operation has
-                    // been aborted because of either a thread exit or an application request.
-                    // (Exception from HRESULT: 0x800703E3)" exception is thrown.
-                    uint bytesRead = await reader.LoadAsync(16);
-                    if (bytesRead == 0)
-                    {
-                        // If bytesRead is zero, incoming stream was closed.
-                        DisplayOutput(TcpClientOutput, "The server is gone.");
-                        return;
-                    }
-                    response += reader.ReadString(bytesRead);
-                }
+                string response = await ReadUntilCrLf(socket.InputStream, TcpClientOutput);
                 DisplayOutput(TcpClientOutput, response);
-
-                // Do not use Dispose(). If used, streams cannot be used anymore.
-                //reader.Dispose();
-                //writer.Dispose();
-
-                // I think this is needed, because without this, the DataReader destructor closes
-                // the stream, and closing the stream might set the FIN control bit.
-                reader.DetachStream();
-                writer.DetachStream();
             }
         }
 
@@ -182,6 +158,63 @@ namespace WindowsStoreSockets
                 socket = null;
                 DisplayOutput(TcpClientOutput, "Closed.");
             }
+        }
+
+        //
+        // TCP server and TCP client common.
+        //
+
+        private async Task<string> ReadUntilCrLf(IInputStream inputStream, TextBlock outputTextBlock)
+        {
+            DataReader reader = new DataReader(inputStream);
+            reader.InputStreamOptions = InputStreamOptions.Partial;
+
+            string receivedText = "";
+            while (!receivedText.EndsWith("\r\n"))
+            {
+                // Read bytes in multiples of 16, to make it more fun.
+                // If the socket is closed while we are reading, the "The I/O operation has
+                // been aborted because of either a thread exit or an application request.
+                // (Exception from HRESULT: 0x800703E3)" exception is thrown.
+                uint bytesRead = await reader.LoadAsync(16);
+                if (bytesRead == 0)
+                {
+                    // If bytesRead is zero, incoming stream was closed.
+                    DisplayOutput(outputTextBlock, "The stream/connection was closed by remote host.");
+                    break;
+                }
+                // TODO: Why DataReader doesn't have ReadChar()?
+                receivedText += reader.ReadString(bytesRead);
+            }
+
+            // Do not use Dispose(). If used, streams cannot be used anymore.
+            //reader.Dispose();
+
+            // Without this, the DataReader destructor will close the stream, and closing the
+            // stream might set the FIN control bit.
+            reader.DetachStream();
+
+            return receivedText;
+        }
+
+        private async Task Send(IOutputStream outputStream, string response)
+        {
+            DataWriter writer = new DataWriter(outputStream);
+
+            // This is useless in this sample. Just a friendly remainder.
+            uint responseLength = writer.MeasureString(response);
+
+            writer.WriteString(response);
+            uint bytesWritten = await writer.StoreAsync();
+
+            Debug.Assert(bytesWritten == responseLength);
+
+            // Do not use Dispose(). If used, streams cannot be used anymore.
+            //writer.Dispose();
+
+            // Without this, the DataReader destructor will close the stream, and closing the
+            // stream might set the FIN control bit.
+            writer.DetachStream();
         }
 
         //
