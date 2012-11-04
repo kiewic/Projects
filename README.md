@@ -19,7 +19,7 @@ Each project contains:
 
 1. Run any version of TCP server.
 2. Run any version of TCP client (remember to change localhost, 127.0.0.1 or ::1 
-   if you are running server and client in different machines).
+   if you are running server and client on different machines).
 3. See results. 
   * TCP client sends a message ending with \r\n.
   * TCP server receives the message.
@@ -32,7 +32,7 @@ Each project contains:
 
 1. Run any  version of UDP receive socket.
 2. Run any version of UDP send socket (remember to change localhost, 127.0.0.1 or ::1 
-   if you are running receive socket and send socket in different machines).
+   if you are running receive socket and send socket on different machines).
 3. See results. 
   * UDP send socket sends a message (this message doesn't end with \r\n beacuse datagrams
     size is limited to ~1050 bytes, then, we  can read all data in just one call).
