@@ -7,6 +7,7 @@ We have sockets in many flavors:
 * Win32
 * .NET Framework (C#)
 * Windows Runtime/Windows Store Apps (C#)
+* Windows Runtime/Windows Store Apps (C++) *<-- This is cool, it uses C++11 features.*
 
 Each project contains:
 
