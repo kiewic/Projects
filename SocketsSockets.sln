@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopSockets", "DesktopSo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32Sockets", "Win32Sockets\Win32Sockets.vcxproj", "{E9EB40CE-FE6A-4378-B2FC-C550EAE1CA88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStoreSockets", "WindowsStoreSockets\WindowsStoreSockets.csproj", "{173FCEB2-258F-4855-B638-3ED15A8EDB53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStoreSocketsCS", "WindowsStoreSocketsCS\WindowsStoreSocketsCS.csproj", "{173FCEB2-258F-4855-B638-3ED15A8EDB53}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsStoreSocketsCPP", "WindowsStoreSocketsCPP\WindowsStoreSocketsCPP.vcxproj", "{49FBD8BB-F120-4EDB-A669-B55E222B20EB}"
 EndProject
