@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="f44ddd73-9afd-44fb-bcf1-2744ea488b35" Publisher="CN=Gilberto" Version="1.0.0.0" />
+  <Identity Name="57a4f9a1-9c82-480d-ad3d-d7a22bb81ddc" Publisher="CN=Gilberto" Version="1.0.0.0" />
   <Properties>
-    <DisplayName>WindowsStoreSockets</DisplayName>
+    <DisplayName>WindowsStoreSocketsCPP</DisplayName>
     <PublisherDisplayName>Gilberto</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -14,15 +14,15 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="WindowsStoreSockets.App">
-      <VisualElements DisplayName="Windows Store Sockets C#" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="Windows Store Sockets C#" ForegroundText="light" BackgroundColor="#464646">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="WindowsStoreSocketsCPP.App">
+      <VisualElements DisplayName="Windows Store Sockets C++" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="Windows Store Sockets C++" ForegroundText="light" BackgroundColor="#464646">
         <DefaultTile ShowName="allLogos" />
         <SplashScreen Image="Assets\SplashScreen.png" />
       </VisualElements>
     </Application>
   </Applications>
   <Capabilities>
-    <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
+    <Capability Name="internetClientServer" />
   </Capabilities>
 </Package>

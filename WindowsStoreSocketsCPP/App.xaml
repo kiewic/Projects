@@ -1,8 +1,8 @@
 ﻿<Application
-    x:Class="WindowsStoreSockets.App"
+    x:Class="WindowsStoreSocketsCPP.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:WindowsStoreSockets">
+    xmlns:local="using:WindowsStoreSocketsCPP">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -15,7 +15,7 @@
                 <ResourceDictionary Source="Common/StandardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <SolidColorBrush x:Key="PageBackgroundBrush" Color="#E54028" />
+            <SolidColorBrush x:Key="PageBackgroundBrush" Color="#61AE24" />
 
         </ResourceDictionary>
     </Application.Resources>

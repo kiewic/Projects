@@ -55,7 +55,8 @@ publish
 # Publish Web Output
 *.Publish.xml
 
-# Windows Store app package directory
-AppPackages/
+# Windows Store Apps directories
+AppPackages
+Generated Files
 
 

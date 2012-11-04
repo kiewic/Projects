@@ -49,22 +49,23 @@ namespace WindowsStoreSockets
         {
             try
             {
-                // We call it 'local', becuase if this connection doesn't succeed, we do not want
-                // to loose the possible previous conneted listener.
-                StreamSocketListener localListener = new StreamSocketListener();
+                if (listener == null)
+                {
+                    // We call it 'local', becuase if this connection doesn't succeed, we do not want
+                    // to loose the possible previous conneted listener.
+                    listener = new StreamSocketListener();
 
-                // ConnectionReceived handler must be set before BindServiceNameAsync is called, if not
-                // "A method was called at an unexpected time. (Exception from HRESULT: 0x8000000E)"
-                // error occurs.
-                localListener.ConnectionReceived += OnConnectionReceived;
+                    // ConnectionReceived handler must be set before BindServiceNameAsync is called, if not
+                    // "A method was called at an unexpected time. (Exception from HRESULT: 0x8000000E)"
+                    // error occurs.
+                    listener.ConnectionReceived += OnConnectionReceived;
 
-                // Trying to bind more than once to the same port throws "Only one usage of each socket
-                // address (protocol/network address/port) is normally permitted. (Exception from
-                // HRESULT: 0x80072740)" exception.
-                await localListener.BindServiceNameAsync("80");
-                DisplayOutput(TcpServerOutput, "Listening.");
-
-                listener = localListener;
+                    // Trying to bind more than once to the same port throws "Only one usage of each socket
+                    // address (protocol/network address/port) is normally permitted. (Exception from
+                    // HRESULT: 0x80072740)" exception.
+                    await listener.BindServiceNameAsync("80");
+                    DisplayOutput(TcpServerOutput, "Listening.");
+                }
             }
             catch (Exception ex)
             {
@@ -78,26 +79,24 @@ namespace WindowsStoreSockets
         {
             try
             {
-                DisplayOutput(TcpServerOutput, args.Socket.Information.RemoteAddress.DisplayName +
-                    " connected.");
+                DisplayOutput(TcpServerOutput, args.Socket.Information.RemoteAddress.DisplayName + " connected.");
 
                 while (true)
                 {
                     // Read request.
                     string request = await ReadUntilCrLf(args.Socket.InputStream, TcpServerOutput);
-                    DisplayOutput(TcpServerOutput, request);
-
                     if (String.IsNullOrEmpty(request))
                     {
                         // If there was no request. The remote host closed the connection.
                         return;
                     }
+                    DisplayOutput(TcpServerOutput, request);
 
                     // Send response.
                     string response = "Yes, I am ñoño. The time is " + DateTime.Now + ".\r\n";
 
                     // In this sample since the server doesn´t close the close the socket, we
-                    // could do it async (i.e. without await).
+                    // could do it async (i.e. without await)., but not now.
                     await Send(args.Socket.OutputStream, response);
                 }
             }
@@ -169,8 +168,8 @@ namespace WindowsStoreSockets
             DataReader reader = new DataReader(inputStream);
             reader.InputStreamOptions = InputStreamOptions.Partial;
 
-            string receivedText = "";
-            while (!receivedText.EndsWith("\r\n"))
+            string message = "";
+            while (!message.EndsWith("\r\n"))
             {
                 // Read bytes in multiples of 16, to make it more fun.
                 // If the socket is closed while we are reading, the "The I/O operation has
@@ -180,11 +179,11 @@ namespace WindowsStoreSockets
                 if (bytesRead == 0)
                 {
                     // If bytesRead is zero, incoming stream was closed.
-                    DisplayOutput(outputTextBlock, "The stream/connection was closed by remote host.");
+                    DisplayOutput(outputTextBlock, "The connection was closed by remote host.");
                     break;
                 }
                 // TODO: Why DataReader doesn't have ReadChar()?
-                receivedText += reader.ReadString(bytesRead);
+                message += reader.ReadString(bytesRead);
             }
 
             // Do not use Dispose(). If used, streams cannot be used anymore.
@@ -194,20 +193,20 @@ namespace WindowsStoreSockets
             // stream might set the FIN control bit.
             reader.DetachStream();
 
-            return receivedText;
+            return message;
         }
 
-        private async Task Send(IOutputStream outputStream, string response)
+        private async Task Send(IOutputStream outputStream, string message)
         {
             DataWriter writer = new DataWriter(outputStream);
 
             // This is useless in this sample. Just a friendly remainder.
-            uint responseLength = writer.MeasureString(response);
+            uint messageLength = writer.MeasureString(message);
 
-            writer.WriteString(response);
+            writer.WriteString(message);
             uint bytesWritten = await writer.StoreAsync();
 
-            Debug.Assert(bytesWritten == responseLength);
+            Debug.Assert(bytesWritten == messageLength);
 
             // Do not use Dispose(). If used, streams cannot be used anymore.
             //writer.Dispose();
@@ -226,21 +225,28 @@ namespace WindowsStoreSockets
 
         private async void ConnectUdpReceive_Click_1(object sender, RoutedEventArgs e)
         {
-            if (receiveSocket == null)
+            try
             {
-                receiveSocket = new DatagramSocket();
+                if (receiveSocket == null)
+                {
+                    receiveSocket = new DatagramSocket();
 
-                // MessageReceived handler must be set before BindServiceAsync is called, if not
-                // "A method was called at an unexpected time. (Exception from HRESULT: 
-                // 0x8000000E)" exception is thrown.
-                receiveSocket.MessageReceived += OnMessageReceived;
+                    // MessageReceived handler must be set before BindServiceAsync is called, if not
+                    // "A method was called at an unexpected time. (Exception from HRESULT: 
+                    // 0x8000000E)" exception is thrown.
+                    receiveSocket.MessageReceived += OnMessageReceived;
 
-                // If port is already in used by another socket, "Only one usage of each socket
-                // address (protocol/network address/port) is normally permitted. (Exception from
-                // HRESULT: 0x80072740)" exception is thrown.
-                await receiveSocket.BindServiceNameAsync("2704");
+                    // If port is already in used by another socket, "Only one usage of each socket
+                    // address (protocol/network address/port) is normally permitted. (Exception from
+                    // HRESULT: 0x80072740)" exception is thrown.
+                    await receiveSocket.BindServiceNameAsync("2704");
 
-                DisplayOutput(UdpReceiveOutput, "Connected (bound).");
+                    DisplayOutput(UdpReceiveOutput, "Connected (bound).");
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayOutput(UdpReceiveOutput, ex.ToString());
             }
         }
 
@@ -258,14 +264,28 @@ namespace WindowsStoreSockets
             DatagramSocket sender,
             DatagramSocketMessageReceivedEventArgs args)
         {
-            DataReader reader = args.GetDataReader();
-            reader.InputStreamOptions = InputStreamOptions.Partial;
-            // LoadAsync not needed. The reader comes already loaded.
-            uint bytesRead = reader.UnconsumedBufferLength;
-            string message = reader.ReadString(bytesRead);
+            try
+            {
+                DataReader reader = args.GetDataReader();
+                reader.InputStreamOptions = InputStreamOptions.Partial;
 
-            DisplayOutput(UdpReceiveOutput, "Message received from [" + 
-                args.RemoteAddress.DisplayName + "]:" + args.RemotePort + ": " + message);
+                // LoadAsync not needed. The reader comes already loaded.
+
+                // If called by a 'Udp send socket', next line throws an exception because message was not received.
+
+                // If remote peer didn't received message, "An existing connection was forcibly
+                // closed by the remote host. (Exception from HRESULT: 0x80072746)" exception is
+                // thrown.
+                uint bytesRead = reader.UnconsumedBufferLength;
+                string message = reader.ReadString(bytesRead);
+
+                DisplayOutput(UdpReceiveOutput, "Message received from [" +
+                    args.RemoteAddress.DisplayName + "]:" + args.RemotePort + ": " + message);
+            }
+            catch (Exception)
+            {
+                DisplayOutput(UdpSendOutput, "Peer didn't receive message.");
+            }
         }
 
         //
@@ -276,40 +296,29 @@ namespace WindowsStoreSockets
         {
             DatagramSocket socket = new DatagramSocket();
 
-            // Even when we do not except any response, this handler is called if any error
-            // occurrs.
-            socket.MessageReceived += socket_MessageReceived;
+            // Even when we do not except any response, this handler is called if any error occurrs.
+            socket.MessageReceived += OnMessageReceived;
 
-            // DatagramSocket.ConnectAsync() vs datagramSocket.GetOutputStreamAsync()?
-            await socket.ConnectAsync(new HostName("localhost"), "2704");
-
-            DataWriter writer = new DataWriter(socket.OutputStream);
-            string message = "¡Hello, I am the new guy in the network!";
-            writer.WriteString(message);
+            // TODO: DatagramSocket.ConnectAsync() vs datagramSocket.GetOutputStreamAsync()?
 
             // If GetOutputStreamAsync was used instead of ConnectAsync, "An existing connection
             // was forcibly closed by the remote host. (Exception from HRESULT: 0x80072746)"
             // exepction is thrown.
+            await socket.ConnectAsync(new HostName("localhost"), "2704");
+
+            string message = "¡Hello, I am the new guy in the network!";
+            DataWriter writer = new DataWriter(socket.OutputStream);
+
+            // This is useless in this sample. Just a friendly remainder.
+            uint messageLength = writer.MeasureString(message);
+
+            writer.WriteString(message);
+
             uint bytesWritten = await writer.StoreAsync();
 
-            DisplayOutput(UdpSendOutput, "Message sent: " + message);
-        }
+            Debug.Assert(bytesWritten == messageLength);
 
-        private void socket_MessageReceived(
-            DatagramSocket sender,
-            DatagramSocketMessageReceivedEventArgs args)
-        {
-            try
-            {
-                // If remote peer didn't received message, "An existing connection was forcibly
-                // closed by the remote host. (Exception from HRESULT: 0x80072746)" exception is
-                // thrown.
-                uint bytesRead = args.GetDataReader().UnconsumedBufferLength;
-            }
-            catch (Exception)
-            {
-                DisplayOutput(UdpSendOutput, "Peer didn't receive message.");
-            }
+            DisplayOutput(UdpSendOutput, "Message sent: " + message);
         }
 
     }
