@@ -1,11 +1,4 @@
-#include <cstdio>
-#include <WinSock2.h>
-
-// IPV6_V6ONLY
-#include <WS2tcpip.h>
-
-// SO_UPDATE_CONNECT_CONTEXT
-#include <mswsock.h>
+#include "stdafx.h"
 
 int DoTcpClient()
 {

@@ -1,8 +1,4 @@
-#include <cstdio>
-#include <WinSock2.h>
-
-// IPV6_V6ONLY
-#include <WS2tcpip.h>
+#include "stdafx.h"
 
 int DoTcpServer()
 {
@@ -10,14 +6,12 @@ int DoTcpServer()
     SOCKET acceptSocket;
     int ipv6only = 0;
     int result;
-    BOOL success;
 
     //wchar_t hostName[] = L"::";
     wchar_t serviceName[] = L"80";
 
     struct sockaddr_in6 localAddr = {0};
     struct sockaddr_in6 remoteAddr = {0};
-    DWORD localAddrSize = sizeof(localAddr);
     int remoteAddrSize = sizeof(remoteAddr);
 
     const wchar_t sendMessage[] = L"Yes, I am ñoño. I do not know what time is it.\r\n";

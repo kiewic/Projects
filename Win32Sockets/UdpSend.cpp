@@ -1,8 +1,4 @@
-#include <cstdio>
-#include <WinSock2.h>
-
-// sockaddr_in6
-#include <ws2tcpip.h>
+#include "stdafx.h"
 
 int DoUdpSend()
 {
