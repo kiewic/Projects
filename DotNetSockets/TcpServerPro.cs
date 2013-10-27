@@ -15,6 +15,10 @@ namespace DotNetSockets
         {
             Socket listenSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 
+            // Socket.DualMode property enables or disables WinSock IPV6_V6ONLY option. More info at
+            // http://blogs.msdn.com/b/webdev/archive/2013/01/08/dual-mode-sockets-never-create-an-ipv4-socket-again.aspx
+            Console.WriteLine("Dual mode: {0}", listenSocket.DualMode);
+
             // Is socket is already taken, "SocketException: Only one usage of each socket
             // address (protocol/network address/port) is normally permitted (-2147467259)" is
             // thrown.
