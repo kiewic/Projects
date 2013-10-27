@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopSockets", "DesktopSockets\DesktopSockets.csproj", "{DC163F81-A7FC-4B06-A683-B40FE3896976}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetSockets", "DotNetSockets\DotNetSockets.csproj", "{DC163F81-A7FC-4B06-A683-B40FE3896976}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32Sockets", "Win32Sockets\Win32Sockets.vcxproj", "{E9EB40CE-FE6A-4378-B2FC-C550EAE1CA88}"
 EndProject
