@@ -275,14 +275,14 @@ namespace WindowsStoreSockets
 
                 // If remote peer didn't received message, "An existing connection was forcibly
                 // closed by the remote host. (Exception from HRESULT: 0x80072746)" exception is
-                // thrown.
+                // thrown. Maybe only when using ConenctAsync(), not GetOutputStreamAsync().
                 uint bytesRead = reader.UnconsumedBufferLength;
                 string message = reader.ReadString(bytesRead);
 
                 DisplayOutput(UdpReceiveOutput, "Message received from [" +
                     args.RemoteAddress.DisplayName + "]:" + args.RemotePort + ": " + message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 DisplayOutput(UdpSendOutput, "Peer didn't receive message.");
             }
@@ -294,31 +294,40 @@ namespace WindowsStoreSockets
 
         private async void UdpSend_Click_1(object sender, RoutedEventArgs e)
         {
-            DatagramSocket socket = new DatagramSocket();
+            DatagramSocket sendSocket = new DatagramSocket();
 
             // Even when we do not except any response, this handler is called if any error occurrs.
-            socket.MessageReceived += OnMessageReceived;
+            sendSocket.MessageReceived += OnMessageReceived;
 
-            // TODO: DatagramSocket.ConnectAsync() vs datagramSocket.GetOutputStreamAsync()?
+            try
+            {
+                await sendSocket.ConnectAsync(new HostName("foohost"), "2704");
+                // DatagramSocket.ConnectAsync() vs DatagramSocket.GetOutputStreamAsync()?
+                // Use DatagramSocket.GetOutputStreamAsync() if datagrams are sent to multiple
+                // GetOutputStreamAsync() does DNS resolution first.
+                // If remote host does not exist, "No such host is known. (Exception from HRESULT: 0x80072AF9)"
+                // exception is thrown.
+                // If remote host is not listening on the specified host, "An existing connection was forcibly
+                // closed by the remote host. (Exception from HRESULT: 0x80072746)" exception is thrown.
 
-            // If GetOutputStreamAsync was used instead of ConnectAsync, "An existing connection
-            // was forcibly closed by the remote host. (Exception from HRESULT: 0x80072746)"
-            // exepction is thrown.
-            await socket.ConnectAsync(new HostName("localhost"), "2704");
+                string message = "¡Hello, I am the new guy in the network!";
+                DataWriter writer = new DataWriter(sendSocket.OutputStream);
 
-            string message = "¡Hello, I am the new guy in the network!";
-            DataWriter writer = new DataWriter(socket.OutputStream);
+                // This is useless in this sample. Just a friendly remainder.
+                uint messageLength = writer.MeasureString(message);
 
-            // This is useless in this sample. Just a friendly remainder.
-            uint messageLength = writer.MeasureString(message);
+                writer.WriteString(message);
 
-            writer.WriteString(message);
+                uint bytesWritten = await writer.StoreAsync();
 
-            uint bytesWritten = await writer.StoreAsync();
+                Debug.Assert(bytesWritten == messageLength);
 
-            Debug.Assert(bytesWritten == messageLength);
-
-            DisplayOutput(UdpSendOutput, "Message sent: " + message);
+                DisplayOutput(UdpSendOutput, "Message sent: " + message);
+            }
+            catch (Exception ex)
+            {
+                DisplayOutput(UdpSendOutput, ex.ToString());
+            }
         }
 
     }

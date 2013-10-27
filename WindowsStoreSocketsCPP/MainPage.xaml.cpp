@@ -358,10 +358,10 @@ void MainPage::DisconnectUdpReceive_Click_1(Platform::Object^ sender, Windows::U
 
 void MainPage::UdpSend_Click_1(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    DatagramSocket^ socket = ref new DatagramSocket();
+    DatagramSocket^ sendSocket = ref new DatagramSocket();
 
     // Even when we do not except any response, this handler is called if any error occurrs.
-    socket->MessageReceived += ref new TypedEventHandler<DatagramSocket^, DatagramSocketMessageReceivedEventArgs^>(
+    sendSocket->MessageReceived += ref new TypedEventHandler<DatagramSocket^, DatagramSocketMessageReceivedEventArgs^>(
         this,
         &MainPage::OnMessageReceived);
 
@@ -370,12 +370,12 @@ void MainPage::UdpSend_Click_1(Platform::Object^ sender, Windows::UI::Xaml::Rout
     // If GetOutputStreamAsync was used instead of ConnectAsync, "An existing connection
     // was forcibly closed by the remote host. (Exception from HRESULT: 0x80072746)"
     // exepction is thrown.
-    task<void>(socket->ConnectAsync(ref new HostName("localhost"), "2704")).then([=](task<void> t)
+    task<void>(sendSocket->ConnectAsync(ref new HostName("localhost"), "2704")).then([=](task<void> t)
     {
         // Was an exception throw?
         t.get();
 
-        DataWriter^ writer = ref new DataWriter(socket->OutputStream);
+        DataWriter^ writer = ref new DataWriter(sendSocket->OutputStream);
         String^ message = "¡Hello, I am the new guy in the network!";
 
         // This is useless in this sample. Just a friendly remainder.
