@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStoreSocketsCS", "WindowsStoreSocketsCS\WindowsStoreSocketsCS.csproj", "{173FCEB2-258F-4855-B638-3ED15A8EDB53}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsStoreSocketsCPP", "WindowsStoreSocketsCPP\WindowsStoreSocketsCPP.vcxproj", "{49FBD8BB-F120-4EDB-A669-B55E222B20EB}"
 EndProject
 Global
@@ -21,42 +19,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|ARM.ActiveCfg = Debug|ARM
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|ARM.Build.0 = Debug|ARM
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|ARM.Deploy.0 = Debug|ARM
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Win32.ActiveCfg = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Win32.Build.0 = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Win32.Deploy.0 = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|x64.ActiveCfg = Debug|x64
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|x64.Build.0 = Debug|x64
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|x64.Deploy.0 = Debug|x64
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|x86.ActiveCfg = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|x86.Build.0 = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|x86.Deploy.0 = Debug|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Any CPU.Build.0 = Release|Any CPU
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|ARM.ActiveCfg = Release|ARM
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|ARM.Build.0 = Release|ARM
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|ARM.Deploy.0 = Release|ARM
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Mixed Platforms.Build.0 = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Mixed Platforms.Deploy.0 = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Win32.ActiveCfg = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Win32.Build.0 = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|Win32.Deploy.0 = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|x64.ActiveCfg = Release|x64
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|x64.Build.0 = Release|x64
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|x64.Deploy.0 = Release|x64
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|x86.ActiveCfg = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|x86.Build.0 = Release|x86
-		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Release|x86.Deploy.0 = Release|x86
 		{49FBD8BB-F120-4EDB-A669-B55E222B20EB}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{49FBD8BB-F120-4EDB-A669-B55E222B20EB}.Debug|ARM.ActiveCfg = Debug|ARM
 		{49FBD8BB-F120-4EDB-A669-B55E222B20EB}.Debug|ARM.Build.0 = Debug|ARM
