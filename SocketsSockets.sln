@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetSockets", "DotNetSockets\DotNetSockets.csproj", "{DC163F81-A7FC-4B06-A683-B40FE3896976}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStoreSocketsCS", "WindowsStoreSocketsCS\WindowsStoreSocketsCS.csproj", "{173FCEB2-258F-4855-B638-3ED15A8EDB53}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsStoreSocketsCPP", "WindowsStoreSocketsCPP\WindowsStoreSocketsCPP.vcxproj", "{49FBD8BB-F120-4EDB-A669-B55E222B20EB}"
@@ -23,22 +21,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|ARM.ActiveCfg = Release|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|Win32.ActiveCfg = Release|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|x64.ActiveCfg = Release|Any CPU
-		{DC163F81-A7FC-4B06-A683-B40FE3896976}.Release|x86.ActiveCfg = Release|Any CPU
 		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{173FCEB2-258F-4855-B638-3ED15A8EDB53}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
