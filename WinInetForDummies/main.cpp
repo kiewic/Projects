@@ -1,10 +1,26 @@
 #include <Windows.h>
 #include <WinInet.h>
-#include <stdio.h>
+#include <cstdio>
 
 #pragma comment(lib, "Wininet.lib")
 
-#define BUFFER_SIZE 0x10000
+#define BUFFER_SIZE 100
+
+HRESULT createSession(HINTERNET* sessionHandle)
+{
+    *sessionHandle = InternetOpen(
+        L"", // user agent
+        INTERNET_OPEN_TYPE_PRECONFIG,
+        nullptr,
+        nullptr,
+        0);
+    if (!(*sessionHandle))
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+
+    return S_OK;
+}
 
 HRESULT createConnection(HINTERNET sessionHandle, wchar_t* hostname, HINTERNET* connectionHandle)
 {
@@ -18,22 +34,6 @@ HRESULT createConnection(HINTERNET sessionHandle, wchar_t* hostname, HINTERNET* 
         0,
         NULL);
     if (!(*connectionHandle))
-    {
-        return HRESULT_FROM_WIN32(GetLastError());
-    }
-
-    return S_OK;
-}
-
-HRESULT createSession(HINTERNET* sessionHandle)
-{
-    *sessionHandle = InternetOpen(
-        L"", // user agent
-        INTERNET_OPEN_TYPE_PRECONFIG,
-        nullptr,
-        nullptr,
-        0);
-    if (!(*sessionHandle))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -63,7 +63,7 @@ HRESULT makeRequest(HINTERNET connectionHandle, wchar_t* rawUrl, bool useCache)
     }
 
     // Timeout.
-    UINT32 timeout = 5000;
+    UINT32 timeout = 60000;
     if (!InternetSetOption(requestHandle, INTERNET_OPTION_RECEIVE_TIMEOUT, &timeout, sizeof(UINT32)))
     {
         int lastError = GetLastError();
@@ -89,16 +89,17 @@ HRESULT makeRequest(HINTERNET connectionHandle, wchar_t* rawUrl, bool useCache)
 
     // Get response headers.
 
-    LPVOID lpOutBuffer = NULL;
-    DWORD dwSize = 0;
+    LPVOID headersBuffer = NULL; // TODO: Use a smart-pointer.
+    DWORD bufferSize = 0;
+
     // This will fail, but we will get the size of the headers.
-    success = HttpQueryInfo(requestHandle, HTTP_QUERY_RAW_HEADERS_CRLF, lpOutBuffer, &dwSize, NULL);
+    success = HttpQueryInfo(requestHandle, HTTP_QUERY_RAW_HEADERS_CRLF, headersBuffer, &bufferSize, NULL);
     if (!success)
     {
         if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-        { 
-            lpOutBuffer = new char[dwSize];
-            success = HttpQueryInfo(requestHandle, HTTP_QUERY_RAW_HEADERS_CRLF, lpOutBuffer, &dwSize, NULL);
+        {
+            headersBuffer = new char[bufferSize];
+            success = HttpQueryInfo(requestHandle, HTTP_QUERY_RAW_HEADERS_CRLF, headersBuffer, &bufferSize, NULL);
         }
 
         if (!success)
@@ -107,15 +108,15 @@ HRESULT makeRequest(HINTERNET connectionHandle, wchar_t* rawUrl, bool useCache)
         }
     }
 
-    wprintf(L"%s\n", lpOutBuffer);
-    delete[] lpOutBuffer;
+    wprintf(L"%s\n", headersBuffer);
+    delete[] headersBuffer;
 
     // Get response content.
 
     DWORD bytesReceived;
     DWORD totalBytesReceived = 0;
 
-    do 
+    do
     {
         success = InternetReadFile(
             requestHandle,
@@ -124,8 +125,9 @@ HRESULT makeRequest(HINTERNET connectionHandle, wchar_t* rawUrl, bool useCache)
             &bytesReceived);
 
         totalBytesReceived += bytesReceived;
-    }
-    while (success && bytesReceived > 0);
+
+        wprintf(L"bytes received so far: %d\n", totalBytesReceived);
+    } while (success && bytesReceived > 0);
 
     if (!success)
     {
@@ -133,14 +135,14 @@ HRESULT makeRequest(HINTERNET connectionHandle, wchar_t* rawUrl, bool useCache)
     }
 
     wprintf(L"conectionHandle %#08x and requestHandle %#08d\n", connectionHandle, requestHandle);
-    wprintf(L"totalBytesReceived %d\n", connectionHandle, requestHandle);
+    wprintf(L"total bytes received: %d\n", totalBytesReceived);
 
     InternetCloseHandle(requestHandle);
 
     return S_OK;
 }
 
-HRESULT doMain()
+HRESULT mainCore()
 {
     HRESULT hr;
 
@@ -152,13 +154,13 @@ HRESULT doMain()
     }
 
     HINTERNET connectionHandle;
-    hr = createConnection(sessionHandle, L"kiewic.com", &connectionHandle);
+    hr = createConnection(sessionHandle, L"localhost", &connectionHandle);
     if (FAILED(hr))
     {
         return hr;
     }
 
-    hr = makeRequest(connectionHandle, L"/?timeout", true);
+    hr = makeRequest(connectionHandle, L"/?length=101&chunked=1", true);
     if (FAILED(hr))
     {
         return hr;
@@ -170,9 +172,9 @@ HRESULT doMain()
     return S_OK;
 }
 
-int main() {
-    HRESULT hr = doMain();
-    //HRESULT hr = doSessionFirtOneAndThenTheSecondOne();
+int wmain(int argc, wchar_t argv[])
+{
+    HRESULT hr = mainCore();
 
     if (FAILED(hr)) {
         wprintf(L"Process failed with %#08x\n", hr);

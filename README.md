@@ -53,4 +53,7 @@ A project made to practice WinDBG.
 
 More at http://monkeyweekend.wordpress.com/2013/10/27/set-a-breakpoint-that-breaks-every-time-a-function-returns/
 
+## WinrtFromDesktop
+
+Samples of how to call Windows Runtime projects from Desktop apps.
 
