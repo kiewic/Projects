@@ -176,8 +176,10 @@ int wmain(int argc, wchar_t argv[])
 {
     HRESULT hr = mainCore();
 
-    if (FAILED(hr)) {
+    if (FAILED(hr))
+    {
         wprintf(L"Process failed with %#08x\n", hr);
+        return hr;
     }
 
     wprintf(L"Done.\n");

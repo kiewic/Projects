@@ -1,0 +1,22 @@
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+
+#define COMPONENT_VERSION 1.0
+
+namespace WinrtComponentUsingWRL
+{
+    interface IFoo;
+    runtimeclass Foo;
+
+    [uuid(87306769-0ef3-4445-961b-38a27d774625), version(COMPONENT_VERSION), exclusiveto(Foo)] 
+    interface IFoo : IInspectable
+    {
+        HRESULT DoBar([in] UINT32 value);
+    }
+
+    [version(COMPONENT_VERSION), activatable(COMPONENT_VERSION)]
+    runtimeclass Foo
+    {
+        [default] interface IFoo;
+    }
+}
