@@ -57,3 +57,6 @@ More at http://monkeyweekend.wordpress.com/2013/10/27/set-a-breakpoint-that-brea
 
 Samples of how to call Windows Runtime projects from Desktop apps.
 
+## CacheConsoleApp
+
+Sample of how to use cache with System.Net.Http.HttpClient. Only available from desktop apps.
