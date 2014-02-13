@@ -1,6 +1,8 @@
-# Do you want to collect a crash-dump but you do not have WinDbg installed?
+## Do you want to collect a crash-dump but you do not have WinDbg installed?
 
-## No problem :) With this set of scripts, you will never require WinDbg again (almost never).
+### No problem. With this set of scripts, you will (almost) never require WinDbg again.
+
+Follow these steps:
 
 1. Execute **KeepCrashDump.reg**
 2. Reproduce crash.
