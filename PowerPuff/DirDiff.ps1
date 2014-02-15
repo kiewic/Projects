@@ -4,7 +4,14 @@
 # * Delete (move picture to Recycle Bin)
 
 
+
 Function CompareDirs([string]$leftDir, [string]$rightDir)
+{
+    CompareDirsCore $leftDir $rightDir $false
+    CompareDirsCore $rightDir $leftDir $true
+}
+
+Function CompareDirsCore([string]$leftDir, [string]$rightDir, [bool]$inverted)
 {
     $files = Get-ChildItem -File -Recurse $leftDir 
     foreach ($file in $files)
@@ -24,18 +31,36 @@ Function CompareDirs([string]$leftDir, [string]$rightDir)
             $rightResult = Test-Path($rightFullName);
         }
 
-        PrintYOrN($leftResult);
-        PrintYOrN($rightResult);
-
-        $foregroundColor = "White";
-        if (!$leftResult -or !$rightResult)
+        if (!$inverted)
         {
-            $foregroundColor = "Yellow";
-            ShowForm $leftFullName $rightFullName
+            ShowResults $leftResult $rightResult $leftFullName $rightFullName
         }
-
-        Write-Host $leftFullName -ForegroundColor $foregroundColor
+        elseif ($inverted -and $leftResult -and $rightResult)
+        {
+            # Do nothing. A "Y Y" result for this files was already reported
+            # when comparing files left to right.
+        }
+        else
+        {
+            ShowResults $rightResult $leftResult $rightFullName $leftFullName
+        }
     }
+}
+
+
+Function ShowResults([bool]$leftResult, [bool]$rightResult, [string]$leftFullName, [string]$rightFullName)
+{
+    PrintYOrN($leftResult);
+    PrintYOrN($rightResult);
+
+    $foregroundColor = "White";
+    if (!$leftResult -or !$rightResult)
+    {
+        $foregroundColor = "Yellow";
+        ShowForm $leftFullName $rightFullName
+    }
+
+    Write-Host $leftFullName -ForegroundColor $foregroundColor
 }
 
 Function PrintYOrN($value)
@@ -74,7 +99,7 @@ Function ShowForm([string]$leftFullName, [string]$rightFullName)
     }
 
     $splitContainer.Panel1.Controls.Add($leftPictureBox)
-    #$splitContainer.Panel2.Controls.Add($rightPictureBox)
+    $splitContainer.Panel2.Controls.Add($rightPictureBox)
 
     $form.Controls.Add($splitContainer)
 
