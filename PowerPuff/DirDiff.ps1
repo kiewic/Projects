@@ -8,6 +8,9 @@ param (
     [string]$directoryB = "C:\users\Gilberto\Desktop\FolderB"
 )
 
+# Make sure to load System.Windows.Forms.dll assembly.
+Add-Type -AssemblyName System.Windows.Forms
+
 $global:skipResult = [System.Windows.Forms.DialogResult]::Cancel;
 $global:replicateResult = [System.Windows.Forms.DialogResult]::Yes;
 $global:deleteResult = [System.Windows.Forms.DialogResult]::No;
@@ -119,6 +122,7 @@ Function ShowForm([string]$leftFullName, [string]$rightFullName)
 
     $flowLayoutPanel.BackColor = [System.Drawing.Color]::Azure
     $splitContainer.BackColor = [System.Drawing.Color]::Azure
+    $splitContainer.SplitterDistance = $splitContainer.Width / 2
 
     $flowLayoutPanel.Anchor = [System.Windows.Forms.AnchorStyles]::Bottom.value__ + `
         [System.Windows.Forms.AnchorStyles]::Left.value__ + `
@@ -167,6 +171,7 @@ Function ShowForm([string]$leftFullName, [string]$rightFullName)
     $splitContainer.Panel1.Controls.Add($leftPictureBox)
     $splitContainer.Panel2.Controls.Add($rightPictureBox)
 
+    $form.WindowState = [System.Windows.Forms.FormWindowState]::Maximized
     $form.Controls.Add($flowLayoutPanel)
     $form.Controls.Add($splitContainer)
 
