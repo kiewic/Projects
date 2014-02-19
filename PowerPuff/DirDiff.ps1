@@ -3,7 +3,7 @@
 # * Replicate (keep picture in both folders)
 # * Delete (move picture to Recycle Bin)
 
-$global:skipResult = [System.Windows.Forms.DialogResult]::Ignore;
+$global:skipResult = [System.Windows.Forms.DialogResult]::Cancel;
 $global:replicateResult = [System.Windows.Forms.DialogResult]::Yes;
 $global:deleteResult = [System.Windows.Forms.DialogResult]::No;
 
@@ -16,7 +16,7 @@ Function CompareDirs([string]$leftDir, [string]$rightDir)
 
 Function CompareDirsCore([string]$leftDir, [string]$rightDir, [bool]$inverted)
 {
-    $files = Get-ChildItem -File -Recurse $leftDir 
+    $files = Get-ChildItem -File $leftDir 
     foreach ($file in $files)
     {
         $leftResult = $true
@@ -29,29 +29,38 @@ Function CompareDirsCore([string]$leftDir, [string]$rightDir, [bool]$inverted)
             $relativeName = $leftFullName.Substring($leftDir.Length)
             $rightFullName = $rightDir + $relativeName;
 
-            #Write-Host $rightFullName
-
             $rightResult = Test-Path($rightFullName);
         }
 
-        if (!$inverted)
+        if ($leftResult -and $rightResult)
         {
-            ShowResults $leftResult $rightResult $leftFullName $rightFullName
-        }
-        elseif ($inverted -and $leftResult -and $rightResult)
-        {
-            # Do nothing. A "Y Y" result for this files was already reported
-            # when comparing files left to right.
+            if (!$inverted)
+            {
+                ShowDiff $leftResult $rightResult $leftFullName $rightFullName
+            }
+            else
+            {
+                # Do nothing. A "Y Y" result for this files was already reported
+                # when comparing files left to right.
+            }
         }
         else
         {
-            ShowResults $rightResult $leftResult $rightFullName $leftFullName
+            if (!$inverted)
+            {
+                $result = ShowDiff $leftResult $rightResult $leftFullName $rightFullName
+            }
+            else
+            {
+                $result = ShowDiff $rightResult $leftResult $rightFullName $leftFullName
+            }
+            ApplyFileAction $result $leftFullName $rightFullName
         }
     }
 }
 
 
-Function ShowResults([bool]$leftResult, [bool]$rightResult, [string]$leftFullName, [string]$rightFullName)
+Function ShowDiff([bool]$leftResult, [bool]$rightResult, [string]$leftFullName, [string]$rightFullName)
 {
     PrintYOrN($leftResult);
     PrintYOrN($rightResult);
@@ -66,8 +75,7 @@ Function ShowResults([bool]$leftResult, [bool]$rightResult, [string]$leftFullNam
 
     if (!$leftResult -or !$rightResult)
     {
-        $result = ShowForm $leftFullName $rightFullName
-        ApplyAction $result $leftFullName $rightFullName
+        return ShowForm $leftFullName $rightFullName
     }
 }
 
@@ -126,13 +134,21 @@ Function ShowForm([string]$leftFullName, [string]$rightFullName)
     $rightPictureBox.SizeMode = [System.Windows.Forms.PictureBoxSizeMode]::Zoom
 
 
-    if (Test-Path($leftFullName))
-    {
-        $leftPictureBox.Image = [System.Drawing.Image]::FromFile($leftFullName)
+    Try{
+        if (Test-Path($leftFullName))
+        {
+            $form.Text = $leftFullName
+            $leftPictureBox.Image = [System.Drawing.Image]::FromFile($leftFullName)
+        }
+        if (Test-Path($rightFullName))
+        {
+            $form.Text = $rightFullName
+            $rightPictureBox.Image = [System.Drawing.Image]::FromFile($rightFullName)
+        }
     }
-    if (Test-Path($rightFullName))
+    Catch [System.OutOfMemoryException]
     {
-        $rightPictureBox.Image = [System.Drawing.Image]::FromFile($rightFullName)
+        Write-Host "Wrong image format."
     }
 
     $flowLayoutPanel.Controls.Add($skipButton)
@@ -145,26 +161,51 @@ Function ShowForm([string]$leftFullName, [string]$rightFullName)
     $form.Controls.Add($flowLayoutPanel)
     $form.Controls.Add($splitContainer)
 
-    return $form.ShowDialog()
+    $result = $form.ShowDialog()
+
+    // Release files, so we can delete them if that is the case.
+    if ($leftPictureBox.Image -ne $null)
+    {
+        $leftPictureBox.Image.Dispose()
+    }
+    if ($rightPictureBox.Image -ne $null)
+    {
+        $rightPictureBox.Image.Dispose()
+    }
+    $form.Dispose()
+
+    return $result
 }
 
-Function ApplyAction([System.Windows.Forms.DialogResult]$result, [string]$leftFullName, [string]$rightFullName)
+Function ApplyFileAction([System.Windows.Forms.DialogResult]$result, [string]$leftFullName, [string]$rightFullName)
 {
     switch ($result)
     {
         $global:replicateResult
         {
             Write-Host "Replicate" -ForegroundColor Green
+            Copy-Item $leftFullName $rightFullName
         }
         $global:deleteResult
         {
             Write-Host "Delete" -ForegroundColor Red
+            MoveFileToRecycleBin $leftFullName
         }
         default
         {
             Write-Host "Skip"
         }
     }
+}
+
+function MoveFileToRecycleBin([string]$fileFullName) 
+{
+    $file = New-Object System.IO.FileInfo $fileFullName
+    $shell = New-Object -comobject "Shell.Application"
+    $folder = $shell.Namespace($file.DirectoryName)
+    $item = $folder.ParseName($file.Name)
+
+    $item.InvokeVerb("delete")
 }
 
 $directoryA = "C:\users\Gilberto\Desktop\FolderA"
