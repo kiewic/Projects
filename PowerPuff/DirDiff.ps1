@@ -15,7 +15,6 @@ $global:skipResult = [System.Windows.Forms.DialogResult]::Cancel;
 $global:replicateResult = [System.Windows.Forms.DialogResult]::Yes;
 $global:deleteResult = [System.Windows.Forms.DialogResult]::No;
 
-
 Function CompareDirs([string]$leftDir, [string]$rightDir)
 {
     CompareDirsCore $leftDir $rightDir $false
@@ -24,7 +23,7 @@ Function CompareDirs([string]$leftDir, [string]$rightDir)
 
 Function CompareDirsCore([string]$leftDir, [string]$rightDir, [bool]$inverted)
 {
-    $files = Get-ChildItem -Path $leftDir
+    $files = Get-ChildItem -Path $leftDir -Recurse
     foreach ($file in $files)
     {
         $leftResult = $true
