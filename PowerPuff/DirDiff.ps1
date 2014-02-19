@@ -3,6 +3,11 @@
 # * Replicate (keep picture in both folders)
 # * Delete (move picture to Recycle Bin)
 
+param (
+    [string]$directoryA = "C:\users\Gilberto\Desktop\FolderA",
+    [string]$directoryB = "C:\users\Gilberto\Desktop\FolderB"
+)
+
 $global:skipResult = [System.Windows.Forms.DialogResult]::Cancel;
 $global:replicateResult = [System.Windows.Forms.DialogResult]::Yes;
 $global:deleteResult = [System.Windows.Forms.DialogResult]::No;
@@ -16,7 +21,7 @@ Function CompareDirs([string]$leftDir, [string]$rightDir)
 
 Function CompareDirsCore([string]$leftDir, [string]$rightDir, [bool]$inverted)
 {
-    $files = Get-ChildItem -File $leftDir 
+    $files = Get-ChildItem -Path $leftDir
     foreach ($file in $files)
     {
         $leftResult = $true
@@ -150,6 +155,10 @@ Function ShowForm([string]$leftFullName, [string]$rightFullName)
     {
         Write-Host "Wrong image format."
     }
+    Catch [System.IO.FileNotFoundException]
+    {
+        Write-Host "Maybe a directory."
+    }
 
     $flowLayoutPanel.Controls.Add($skipButton)
     $flowLayoutPanel.Controls.Add($replicateButton)
@@ -163,7 +172,7 @@ Function ShowForm([string]$leftFullName, [string]$rightFullName)
 
     $result = $form.ShowDialog()
 
-    // Release files, so we can delete them if that is the case.
+    # Release files, so we can delete them if that is the case.
     if ($leftPictureBox.Image -ne $null)
     {
         $leftPictureBox.Image.Dispose()
@@ -208,8 +217,6 @@ function MoveFileToRecycleBin([string]$fileFullName)
     $item.InvokeVerb("delete")
 }
 
-$directoryA = "C:\users\Gilberto\Desktop\FolderA"
-$directoryB = "C:\users\Gilberto\Desktop\FolderB"
 CompareDirs $directoryA $directoryB
 
 
