@@ -7,3 +7,4 @@ Follow these steps:
 1. Execute **KeepCrashDump.reg**
 2. Reproduce crash.
 3. Execute **IgnoreCrashDump.reg**
+4. Crash dump is located in **C:\Temp\CrashDumps**
