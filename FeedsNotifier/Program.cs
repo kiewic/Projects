@@ -98,15 +98,18 @@ namespace FeedsNotifier
             {
                 if (title.Contains(keyword) || content.Contains(keyword) || summary.Contains(keyword))
                 {
-                    PrepareToSend(title, content, summary, item);
+                    PrepareToSend(item);
+                    break;
                 }
             }
         }
 
-        private static void PrepareToSend(string title, string content, string summary, SyndicationItem item)
+        private static void PrepareToSend(SyndicationItem item)
         {
             Console.WriteLine("Match: {0}", item.Id);
 
+            string title = item.Title != null ? item.Title.Text : String.Empty;
+            string summary = item.Summary.Text != null ? item.Summary.Text : String.Empty;
             string id = item.Id;
             byte[] idAsBytes = Encoding.UTF8.GetBytes(id);
             string idAsBase64 = Convert.ToBase64String(idAsBytes);
@@ -152,7 +155,7 @@ namespace FeedsNotifier
         {
             var mail = new MailMessage();
             mail.To.Add("kiewic+azure@gmail.com");
-            mail.From = new MailAddress("robot@http2.cloudapp.net");
+            mail.From = new MailAddress("FeedsNotifier <robot@http2.cloudapp.net>");
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = true;
