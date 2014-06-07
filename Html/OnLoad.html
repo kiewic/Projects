@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Sample</title>
+    <script type="text/javascript">
+    function example()
+    {
+        // open websocket
+        var socket = new WebSocket('ws://localhost:80');
+        
+        socket.onopen = function() {
+            console.log("onopen!");
+            // Web Socket is connected. send an initial random message.
+            socket.send("Hello!");
+        };
+    }
+    </script>
+</head>
+<body onload="example();">
+    <h1>Title</h1>
+</body>
+</html>
