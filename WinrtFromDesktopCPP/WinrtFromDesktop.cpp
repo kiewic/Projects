@@ -14,6 +14,16 @@
 
 #pragma comment(lib, "runtimeobject.lib")
 
+#define IfFailedReturn(x) \
+do \
+{ \
+if (FAILED(x)) \
+    { \
+    DebugBreak(); \
+    return hr; \
+    } \
+} while (0)
+
 using namespace ABI::Windows::Data::Json;
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::Web::Syndication;
@@ -31,32 +41,20 @@ using namespace Microsoft::WRL::Wrappers;
 HRESULT LoadFeed()
 {
     ComPtr<ISyndicationFeed> syndicationFeed;
-    HRESULT hr = Windows::Foundation::ActivateInstance(
+    HRESULT hr;
+    IfFailedReturn(Windows::Foundation::ActivateInstance(
         HStringReference(RuntimeClass_Windows_Web_Syndication_SyndicationFeed).Get(),
-        &syndicationFeed);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+        &syndicationFeed));
 
     ComPtr<IStorageFileStatics> storageFileStatics;
-    hr = Windows::Foundation::GetActivationFactory(
+    IfFailedReturn(Windows::Foundation::GetActivationFactory(
         HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(),
-        &storageFileStatics);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+        &storageFileStatics));
 
     ComPtr<ABI::Windows::Foundation::IAsyncOperation<StorageFile*>> getFileFromPathOperation;
-    hr = storageFileStatics->GetFileFromPathAsync(HStringReference(L"c:\\Users\\Gilberto\\Downloads\\feed.xml").Get(), &getFileFromPathOperation);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(storageFileStatics->GetFileFromPathAsync(
+        HStringReference(L"c:\\Users\\Gilberto\\Downloads\\feed.xml").Get(),
+        &getFileFromPathOperation));
 
     //ComPtr<IAsyncOperationCompletedHandler<StorageFile*>>
     //    getFileFromPathHandler(Callback<IAsyncOperationCompletedHandler<StorageFile*>>(&OnGetFileFromPath));
@@ -76,73 +74,34 @@ HRESULT LoadFeed()
     //    return hr;
     //}
 
-    hr = getFileFromPathOperation->put_Completed(getFileFromPathHandler.Get());
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(getFileFromPathOperation->put_Completed(getFileFromPathHandler.Get()));
 
-    hr = getFileFromPathHandler->WaitOne();
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(getFileFromPathHandler->WaitOne());
 
     ComPtr<IAsyncInfo> asyncInfo;
-    hr = getFileFromPathOperation.As(&asyncInfo);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(getFileFromPathOperation.As(&asyncInfo));
 
     AsyncStatus status;
-    hr = asyncInfo->get_Status(&status);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(asyncInfo->get_Status(&status));
 
     if (status != AsyncStatus::Completed)
     {
         HRESULT errorCode;
-        hr = asyncInfo->get_ErrorCode(&errorCode);
-        if (FAILED(hr))
-        {
-            DebugBreak();
-        }
-        DebugBreak();
-        return errorCode;
+        IfFailedReturn(asyncInfo->get_ErrorCode(&errorCode));
+        IfFailedReturn(errorCode);
+        DebugBreak(); // We should never arrive here.
     }
 
     ComPtr<IStorageFile> file;
-    hr = getFileFromPathOperation->GetResults(&file);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(getFileFromPathOperation->GetResults(&file));
 
     ComPtr<IFileIOStatics> fileIoStatics;
-    hr = Windows::Foundation::GetActivationFactory(
+    IfFailedReturn(Windows::Foundation::GetActivationFactory(
         HStringReference(RuntimeClass_Windows_Storage_FileIO).Get(),
-        &fileIoStatics);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+        &fileIoStatics));
 
     ComPtr<ABI::Windows::Foundation::IAsyncOperation<HSTRING>> readTextOperation;
-    hr = fileIoStatics->ReadTextAsync(file.Get(), &readTextOperation);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(fileIoStatics->ReadTextAsync(file.Get(), &readTextOperation));
 
     ComPtr<CompletedHandler<HSTRING>> readTextHandler = Make<CompletedHandler<HSTRING>>();
     if (!readTextHandler.Get())
@@ -151,164 +110,93 @@ HRESULT LoadFeed()
         return E_OUTOFMEMORY;
     }
 
-    hr = readTextOperation->put_Completed(readTextHandler.Get());
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(readTextOperation->put_Completed(readTextHandler.Get()));
 
-    hr = readTextHandler->WaitOne();
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(readTextHandler->WaitOne());
 
-    hr = readTextOperation.As(&asyncInfo);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(readTextOperation.As(&asyncInfo));
 
-    hr = asyncInfo->get_Status(&status);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(asyncInfo->get_Status(&status));
 
     if (status != AsyncStatus::Completed)
     {
         HRESULT errorCode;
-        hr = asyncInfo->get_ErrorCode(&errorCode);
-        if (FAILED(hr))
-        {
-            DebugBreak();
-        }
-        DebugBreak();
-        return errorCode;
+        IfFailedReturn(asyncInfo->get_ErrorCode(&errorCode));
+        IfFailedReturn(errorCode);
+        DebugBreak(); // We should never arrive here.
     }
 
     Microsoft::WRL::Wrappers::HString feedString;
-    hr = readTextOperation->GetResults(feedString.GetAddressOf());
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(readTextOperation->GetResults(feedString.GetAddressOf()));
 
-    hr = syndicationFeed->Load(feedString.Get());
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(syndicationFeed->Load(feedString.Get()));
 
     return S_OK;
 }
 
 HRESULT TestJson()
 {
+    HRESULT hr;
+
     HSTRING className;
-    HRESULT hr = WindowsCreateString(
+    IfFailedReturn(WindowsCreateString(
         RuntimeClass_Windows_Data_Json_JsonObject,
         wcslen(RuntimeClass_Windows_Data_Json_JsonObject),
-        &className);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+        &className));
 
     IInspectable* inspectable;
-    hr = RoActivateInstance(className, &inspectable);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(RoActivateInstance(className, &inspectable));
 
     ULONG iidCount;
     IID* iids;
-    hr = inspectable->GetIids(&iidCount, &iids);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(inspectable->GetIids(&iidCount, &iids));
 
-    wprintf(L"%d\r\n", iidCount);
+    wprintf(L"Iids: %d\r\n", iidCount);
 
     IJsonValue* jsonValue;
-    hr = inspectable->QueryInterface(__uuidof(jsonValue), reinterpret_cast<void**>(&jsonValue));
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(inspectable->QueryInterface(__uuidof(jsonValue), reinterpret_cast<void**>(&jsonValue)));
 
     HSTRING jsonString;
-    hr = jsonValue->Stringify(&jsonString);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(jsonValue->Stringify(&jsonString));
 
     // TODO: Confirm that length parameter is required. I heard it is needed beacuase it is not guaranteed that the
     // PCWSTR will end on null character.
     UINT32 length;
     const wchar_t* rawJsonString;
     rawJsonString = WindowsGetStringRawBuffer(jsonString, &length);
-    wprintf(L"%s (%d)\r\n", rawJsonString, length);
+    wprintf(L"Stringify: %s \r\nlength: %d\r\n", rawJsonString, length);
 
-    hr = WindowsDeleteString(className);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(WindowsDeleteString(className));
 
-    hr = WindowsDeleteString(jsonString);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(WindowsDeleteString(jsonString));
 
     return S_OK;
 }
 
-
-
-int wmain(int argc, wchar_t* argv[])
+class AutoRoUninitialize
 {
+public:
+    ~AutoRoUninitialize()
+    {
+        // Closes Windows Runtime in the current thread.
+        RoUninitialize();
+    }
+};
+
+int wmain(int argc, wchar_t* argv [])
+{
+    HRESULT hr;
+    AutoRoUninitialize autoRoUninitialize;
+
     UNREFERENCED_PARAMETER(argc);
     UNREFERENCED_PARAMETER(argv);
 
-    // TODO: Should we call RoUninitialize?
-    HRESULT hr = ::RoInitialize(RO_INIT_MULTITHREADED);
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    // Prior to using Windows Rutnime, the new thread must first enter an apartment by calling the following function.
+    IfFailedReturn(::RoInitialize(RO_INIT_MULTITHREADED));
 
-    hr = LoadFeed();
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(LoadFeed());
 
-    hr = TestJson();
-    if (FAILED(hr))
-    {
-        DebugBreak();
-        return hr;
-    }
+    IfFailedReturn(TestJson());
 
     return 0;
 }
