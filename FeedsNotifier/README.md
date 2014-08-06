@@ -29,3 +29,12 @@ The server response was: 5.7.1 Unable to relay for <outgoing address>
 7. Check Allow all computers which successfully authenticate to relay, regardless of the list above
 8. Click "OK"
 
+### Gmail Is Blocking Emails
+
+Gmail blocks when sending email and it recommends to follow the following rules: https://support.google.com/mail/answer/81126?hl=en
+
+### Solution:
+
+Apparently using a from address like blah@kiewic.com is more trustworthy then blah@http2.cludapp.net
+
+

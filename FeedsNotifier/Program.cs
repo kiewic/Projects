@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Web.Syndication;
+using System.Windows.Forms;
 
 namespace FeedsNotifier
 {
@@ -33,7 +34,8 @@ namespace FeedsNotifier
         private static void LoadSettings()
         {
             const string fileName = "Settings.json";
-            string jsonString = File.ReadAllText(fileName);
+            string fullName = ToAbsolutePath(fileName);
+            string jsonString = File.ReadAllText(fullName);
             JsonObject jsonObject;
             if (!JsonObject.TryParse(jsonString, out jsonObject))
             {
@@ -45,6 +47,11 @@ namespace FeedsNotifier
 
             JsonArray keywordsArray = jsonObject.GetNamedArrayOrEmptyArray("keywords");
             keywords = keywordsArray.ToStringArray();
+        }
+
+        private static string ToAbsolutePath(string path)
+        {
+            return Path.GetDirectoryName(Application.ExecutablePath) + "\\" + path;
         }
 
         private static void KeywordsToLower()
@@ -106,19 +113,21 @@ namespace FeedsNotifier
 
         private static void PrepareToSend(SyndicationItem item)
         {
-            Console.WriteLine("Match: {0}", item.Id);
+            WriteGreenLine(String.Format("Match: {0}", item.Id));
 
             string title = item.Title != null ? item.Title.Text : String.Empty;
             string summary = item.Summary.Text != null ? item.Summary.Text : String.Empty;
             string id = item.Id;
             byte[] idAsBytes = Encoding.UTF8.GetBytes(id);
             string idAsBase64 = Convert.ToBase64String(idAsBytes);
-            string fileName = idAsBase64 + ".txt";
+            string fileName = String.Format("temp\\{0}.txt", idAsBase64);
+            string fullName = ToAbsolutePath(fileName);
 
-            FileInfo fileInfo = new FileInfo(fileName);
+            FileInfo fileInfo = new FileInfo(fullName);
             if (fileInfo.Exists)
             {
                 // Questions already sent.
+                WriteYellowLine(String.Format("Already sent: {0}", item.Id));
                 return;
             }
 
@@ -138,7 +147,7 @@ namespace FeedsNotifier
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                WriteRedLine(ex.Message);
 
                 // Undo file.
                 File.Delete(fileName);
@@ -151,11 +160,35 @@ namespace FeedsNotifier
             Console.WriteLine("Version: {0}", version);
         }
 
+        private static void WriteGreenLine(string str)
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(str);
+            Console.ForegroundColor = originalColor;
+        }
+
+        private static void WriteRedLine(string str)
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(str);
+            Console.ForegroundColor = originalColor;
+        }
+
+        private static void WriteYellowLine(string str)
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(str);
+            Console.ForegroundColor = originalColor;
+        }
+
         private static void SendEmail(string subject, string body)
         {
             var mail = new MailMessage();
-            mail.To.Add("kiewic+azure@gmail.com");
-            mail.From = new MailAddress("FeedsNotifier <robot@http2.cloudapp.net>");
+            mail.To.Add("kiewic@gmail.com");
+            mail.From = new MailAddress("FeedsNotifier <me@kiewic.com>");
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = true;
