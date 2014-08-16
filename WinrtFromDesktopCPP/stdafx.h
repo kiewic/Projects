@@ -16,5 +16,7 @@
 using namespace ABI::Windows::Foundation;
 using namespace Microsoft::WRL;
 
+#include "Common.h"
+
 
 // TODO: reference additional headers your program requires here

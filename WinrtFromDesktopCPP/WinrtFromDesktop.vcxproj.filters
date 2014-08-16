@@ -24,12 +24,27 @@
     <ClInclude Include="CompletedHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MotherGorilla.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BabyGorilla.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WinrtFromDesktop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MotherGorilla.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BabyGorilla.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

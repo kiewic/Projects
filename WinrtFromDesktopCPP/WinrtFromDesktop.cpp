@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "CompletedHandler.h"
+#include "BabyGorilla.h"
 #include <roapi.h>
 #include <windows.data.json.h>
 #include <windows.foundation.h>
@@ -14,29 +15,10 @@
 
 #pragma comment(lib, "runtimeobject.lib")
 
-#define IfFailedReturn(x) \
-do \
-{ \
-if (FAILED(x)) \
-    { \
-    DebugBreak(); \
-    return hr; \
-    } \
-} while (0)
-
 using namespace ABI::Windows::Data::Json;
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::Web::Syndication;
 using namespace Microsoft::WRL::Wrappers;
-
-//HRESULT OnGetFileFromPath(IAsyncOperation<StorageFile*>* file, AsyncStatus asyncStatus)
-//{
-//    UNREFERENCED_PARAMETER(file);
-//    UNREFERENCED_PARAMETER(asyncStatus);
-//
-//    // Mutex here?
-//    return S_OK;
-//}
 
 HRESULT LoadFeed()
 {
@@ -183,6 +165,25 @@ public:
     }
 };
 
+HRESULT GorillasTest()
+{
+    HRESULT hr;
+
+    ComPtr<MotherGorilla> mother = Make<MotherGorilla>();
+    if (mother == nullptr)
+    {
+        return E_OUTOFMEMORY;
+    }
+
+    ComPtr<BabyGorilla> baby;
+    IfFailedReturn(mother->CreateBaby(&baby));
+
+    wprintf(L"mother: %d\r\n", mother.Reset());
+    wprintf(L"baby: %d\r\n", baby.Reset());
+
+    return S_OK;
+}
+
 int wmain(int argc, wchar_t* argv [])
 {
     HRESULT hr;
@@ -193,6 +194,8 @@ int wmain(int argc, wchar_t* argv [])
 
     // Prior to using Windows Rutnime, the new thread must first enter an apartment by calling the following function.
     IfFailedReturn(::RoInitialize(RO_INIT_MULTITHREADED));
+
+    IfFailedReturn(GorillasTest());
 
     IfFailedReturn(LoadFeed());
 
