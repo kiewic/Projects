@@ -61,6 +61,12 @@ Samples of how to call Windows Runtime projects from Desktop apps.
 
 Sample of how to use cache with System.Net.Http.HttpClient. Only available from desktop apps.
 
+## MutexExample
+
+* CreateMutex
+* WaitForSingleObject
+* ReleaseMutex
+
 ## BackgroundTaskApp
 
 A C# Windows Store App to test:
