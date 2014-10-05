@@ -60,3 +60,13 @@ Samples of how to call Windows Runtime projects from Desktop apps.
 ## CacheConsoleApp
 
 Sample of how to use cache with System.Net.Http.HttpClient. Only available from desktop apps.
+
+## BackgroundTaskApp
+
+A C# Windows Store App to test:
+
+* Windows.Networking.BackgroundTransfer
+* Windows.Web.Http.HttpClient
+* WinRT Certificates.
+* Windows.ApplicationModel.Background.MaintenanceTrigger
+* Bonus: Download funny animal pictures from Reddit.

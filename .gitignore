@@ -59,4 +59,6 @@ publish
 AppPackages
 Generated Files
 
+# Windows Files
+Thumbs.db
 

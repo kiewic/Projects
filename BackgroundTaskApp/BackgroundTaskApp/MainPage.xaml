@@ -1,0 +1,109 @@
+﻿<Page
+    x:Class="BackgroundTaskApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BackgroundTaskApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+  <Page.Resources>
+    <Style TargetType="HyperlinkButton">
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style TargetType="Button">
+      <Setter Property="FontSize" Value="28" />
+    </Style>
+    <Style TargetType="TextBlock">
+      <Setter Property="FontSize" Value="26" />
+      <Setter Property="IsTextSelectionEnabled" Value="True" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style TargetType="TextBox">
+      <Setter Property="FontSize" Value="26" />
+    </Style>
+    <Style TargetType="Border">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{ThemeResource BackButtonDisabledForegroundThemeBrush}" />
+      <Setter Property="Margin" Value="5" />
+      <Setter Property="Padding" Value="5" />
+    </Style>
+  </Page.Resources>
+
+  <ScrollViewer VerticalScrollMode="Enabled" HorizontalScrollMode="Disabled">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+      <Border BorderThickness="3" BorderBrush="YellowGreen">
+        <StackPanel Margin="10">
+          <HyperlinkButton x:Name="RedditLinkButton" Click="RedditLinkButton_Click">
+            <TextBlock x:Name="RedditTitleBlock" FontSize="40" IsTextSelectionEnabled="False">@#$%^</TextBlock>
+          </HyperlinkButton>
+          <Button x:Name="InvokeToast" Click="InvokeToast_Click">Invoke Toast</Button>
+          <Button x:Name="RunBackgroundTaskCode" Click="RunBackgroundTaskCode_Click">Run Background Task Code</Button>
+          <Button x:Name="GetCurrentDownloads" Click="GetCurrentDownloads_Click">GetCurrentDownloadsAsync</Button>
+          <Button x:Name="AttachDownloads" Click="AttachDownloads_Click">GetCurrentDownloadsAsync + AttachAsync</Button>
+          <Border>
+            <TextBlock x:Name="CurrentBlock">...</TextBlock>
+          </Border>
+          <Button x:Name="CreateButDoNotStartDownload" Click="CreateButDoNotStartDownload_Click">Create But Do Not Start Download</Button>
+          <TextBox x:Name="UriBox" Text="http://gistanki-dev2/?etag=123ABC&amp;slow=50&amp;length=500000000&amp;buffersize=500000&amp;filename=something.txt" />
+          <StackPanel Orientation="Horizontal">
+            <Button x:Name="Start" Click="Start_Click">Start</Button>
+            <Button x:Name="Pause" Click="Pause_Click">Pause</Button>
+            <Button x:Name="Resume" Click="Resume_Click">Resume</Button>
+            <Button x:Name="Cancel" Click="Cancel_Click">Cancel</Button>
+          </StackPanel>
+          <Border>
+            <TextBlock x:Name="ProgressBlock">...</TextBlock>
+          </Border>
+          <Border>
+            <TextBlock x:Name="DownloadBlock">...</TextBlock>
+          </Border>
+          <Border>
+            <TextBlock x:Name="HeadersBlock">...</TextBlock>
+          </Border>
+        </StackPanel>
+      </Border>
+      <Border BorderThickness="3" BorderBrush="Fuchsia">
+        <StackPanel Margin="10">
+          <TextBox x:Name="UriBox2" Text="https://keylimepie/" />
+          <StackPanel Orientation="Horizontal">
+            <Button x:Name="GetAsyncButton" Click="GetAsync_Click">GetAsync</Button>
+            <Button x:Name="IgnoreCertErrorsGetAsync" Click="IgnoreCertErrorsGetAsync_Click">Ignore Cert Errors + GetAsync</Button>
+            <Button x:Name="ClientCertGetAsync" Click="ClientCertGetAsync_Click">Client Cert + GetAsync</Button>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <Button x:Name="NoStoreGetAsync" Click="NoStoreGetAsync_Click">no-store + GetAsync</Button>
+            <Button x:Name="NoCacheGetAsync" Click="NoCacheGetAsync_Click">no-cache + GetAsync</Button>
+            <Button x:Name="OnlyIfCachedGetAsync" Click="OnlyIfCachedGetAsync_Click">only-if-cached + GetAsync</Button>
+          </StackPanel>
+          <Border>
+            <TextBlock x:Name="ExceptionBlock">...</TextBlock>
+          </Border>
+          <Border>
+            <TextBlock x:Name="CertErrorsBlock">...</TextBlock>
+          </Border>
+          <Border>
+            <TextBlock x:Name="ResponseContentBlock">...</TextBlock>
+          </Border>
+        </StackPanel>
+      </Border>
+      <Border BorderThickness="3" BorderBrush="DeepSkyBlue">
+        <StackPanel Margin="10">
+          <StackPanel Orientation="Horizontal">
+            <Button x:Name="InstallClientCert" Click="InstallClientCert_Click">Install Client Certificate</Button>
+            <TextBlock x:Name="InstallClientCertCompleted"  Visibility="Collapsed">&#10004;</TextBlock>
+            <Button x:Name="QueryCerts" Click="QueryCerts_Click">Query Certificates</Button>
+            <TextBlock x:Name="QueryCertsCompleted"  Visibility="Collapsed">&#10004;</TextBlock>
+            <Button x:Name="DeleteCerts" Click="DeleteCerts_Click">Delete Certificates</Button>
+            <TextBlock x:Name="DeleteCertsCompleted"  Visibility="Collapsed">&#10004;</TextBlock>
+          </StackPanel>
+          <Border>
+            <TextBlock x:Name="CertsBlock">...</TextBlock>
+          </Border>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</Page>
