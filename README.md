@@ -76,3 +76,7 @@ A C# Windows Store App to test:
 * WinRT Certificates.
 * Windows.ApplicationModel.Background.MaintenanceTrigger
 * Bonus: Download funny animal pictures from Reddit.
+
+## BackgroundTransferFromDesktop
+
+A C# Console App to verify that Background Transfer is not supported on desktop apps.
