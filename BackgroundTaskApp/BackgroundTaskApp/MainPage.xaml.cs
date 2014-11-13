@@ -79,18 +79,6 @@ namespace BackgroundTaskApp
             }
         }
 
-        private void RedditLinkButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var asyncInfo = Launcher.LaunchUriAsync(RedditLinkButton.NavigateUri);
-            }
-            catch (Exception ex)
-            {
-                DisplayException(ex);
-            }
-        }
-
         private void InvokeToast_Click(object sender, RoutedEventArgs e)
         {
             SongProcessingTask2 task = new SongProcessingTask2();

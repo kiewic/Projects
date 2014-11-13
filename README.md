@@ -38,7 +38,7 @@ Each project contains:
   * UDP receive socket receives the message.
   * UDP receive socket displays the message received.
 
-## More Win32Sockets
+## Win32Sockets
 
 * DNS Lookup
 * Reverse DNS Lookup
@@ -80,3 +80,4 @@ A C# Windows Store App to test:
 ## BackgroundTransferFromDesktop
 
 A C# Console App to verify that Background Transfer is not supported on desktop apps.
+    
