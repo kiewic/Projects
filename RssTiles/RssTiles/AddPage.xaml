@@ -1,0 +1,43 @@
+﻿<Page
+    x:Class="RssTiles.AddPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RssTiles"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="FontSize" Value="40" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="40" />
+            <Setter Property="Margin" Value="0,15,0,15" />
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="40" />
+            <Setter Property="Foreground" Value="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
+        </Style>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel VerticalAlignment="Center">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="SourceBox" Grid.Column="1" PlaceholderText="Type a source or RSS URL" KeyDown="SourceBox_KeyDown" />
+            </Grid>
+            <Button x:Name="AddButton" Click="AddButton_Click">Add</Button>
+            <Grid>
+                <TextBlock x:Name="WorkingBlock" Visibility="Collapsed">Searching ...</TextBlock>
+                <TextBlock x:Name="FailBlock" Visibility="Collapsed">Error :(</TextBlock>
+                <TextBlock x:Name="SuccessBlock" Visibility="Collapsed">You are good to go!</TextBlock>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

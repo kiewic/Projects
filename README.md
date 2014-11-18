@@ -80,4 +80,8 @@ A C# Windows Store App to test:
 ## BackgroundTransferFromDesktop
 
 A C# Console App to verify that Background Transfer is not supported on desktop apps.
-    
+
+## RssTiles
+
+* Secondary tiles.
+* Tile updates containing XML for multiple sizes.
