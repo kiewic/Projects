@@ -66,32 +66,32 @@ namespace Tasks
             // It seems we can trigger multiple progress from a background task.
             taskInstance.Progress = 3;
 
-            iteration = GetIterationNumber(taskIdString);
+            LoadIterationNumber();
 
             await CallRedditApi();
             await StartDownload();
 
-            IfNewItemInvokeToast();
+            InvokeToast();
 
-            SetIterationNumber(taskIdString);
+            SaveIterationNumber();
         }
 
-        private void SetIterationNumber(string taskIdString)
+        private void SaveIterationNumber()
         {
             IPropertySet localValues = ApplicationData.Current.LocalSettings.Values;
             localValues[taskIdString] = iteration;
         }
 
-        private int GetIterationNumber(string taskIdString)
+        private void LoadIterationNumber()
         {
             IPropertySet localValues = ApplicationData.Current.LocalSettings.Values;
 
             if (localValues.ContainsKey(taskIdString))
             {
-                return (int)localValues[taskIdString] + 1;
+                iteration = (int)localValues[taskIdString] + 1;
             }
 
-            return 1;
+            iteration = 1;
         }
 
         private void SaveDownloadOperationInfo(Guid transferGuid)
@@ -159,7 +159,7 @@ namespace Tasks
                 HttpClient client = new HttpClient(filter);
 
                 // API documentation at http://www.reddit.com/dev/api
-                string jsonString = await client.GetStringAsync(new Uri("http://www.reddit.com/r/aww/hot.json"));
+                string jsonString = await client.GetStringAsync(new Uri("https://www.reddit.com/r/aww/hot.json"));
 
                 JsonObject jsonObject = JsonObject.Parse(jsonString);
 
@@ -178,6 +178,10 @@ namespace Tasks
                     if (data.Keys.Contains("url"))
                     {
                         item.Url = data.GetNamedString("url");
+                    }
+                    if (data.Keys.Contains("permalink"))
+                    {
+                        item.Permalink = data.GetNamedString("permalink");
                     }
                     if (data.Keys.Contains("title"))
                     {
@@ -215,20 +219,10 @@ namespace Tasks
             return false;
         }
 
-        private void IfNewItemInvokeToast()
+        private void InvokeToast()
         {
-            if (item.Key != item.LastKey)
-            {
-                item.LastKey = item.Key;
-                InvokeSimpleToast();
-            }
-            else
-            {
-                // TODO: Temporarely show th etoast anyway.
-                InvokeSimpleToast();
-
-                Debug.WriteLine("Nothing new to show.");
-            }
+            item.LastKey = item.Key; // TODO: Erase?
+            InvokeSimpleToast();
         }
 
         public void InvokeSimpleToast()
@@ -246,7 +240,7 @@ namespace Tasks
             IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
 
             XmlAttribute launchAttribute = toastXml.CreateAttribute("launch");
-            launchAttribute.Value = item.Encode();
+            launchAttribute.Value = item.Stringify();
             toastNode.Attributes.SetNamedItem(launchAttribute);
 
             XmlNodeList toastImageAttributes = toastXml.GetElementsByTagName("image");

@@ -36,8 +36,11 @@
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
       <Border BorderThickness="3" BorderBrush="YellowGreen">
         <StackPanel Margin="10">
-          <HyperlinkButton x:Name="RedditLinkButton" Click="RedditLinkButton_Click">
+          <HyperlinkButton x:Name="RedditLinkButton">
             <TextBlock x:Name="RedditTitleBlock" FontSize="40" IsTextSelectionEnabled="False">@#$%^</TextBlock>
+          </HyperlinkButton>
+          <HyperlinkButton x:Name="RedditCommentsButton">
+            <TextBlock FontSize="16" IsTextSelectionEnabled="False">Comments</TextBlock>
           </HyperlinkButton>
           <Button x:Name="InvokeToast" Click="InvokeToast_Click">Invoke Toast</Button>
           <Button x:Name="RunBackgroundTaskCode" Click="RunBackgroundTaskCode_Click">Run Background Task Code</Button>

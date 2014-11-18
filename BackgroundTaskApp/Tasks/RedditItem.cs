@@ -37,21 +37,23 @@ namespace Tasks
         public string Title { get; set; }
         public string Thumbnail { get; set; }
         public string Url { get; set; }
+        public string Permalink { get; set; }
 
-        public string Encode()
+        public string Stringify()
         {
             JsonObject jsonObject = new JsonObject();
             jsonObject.SetNamedValue("Title", JsonValue.CreateStringValue(Title));
             jsonObject.SetNamedValue("Url", JsonValue.CreateStringValue(Url));
+            jsonObject.SetNamedValue("Permalink", JsonValue.CreateStringValue(Permalink));
             return jsonObject.Stringify();
         }
 
-        public void Decode(string jsonString)
+        public bool TryParse(string jsonString)
         {
             JsonObject jsonObject;
             if (!JsonObject.TryParse(jsonString, out jsonObject))
             {
-                return;
+                return false;
             }
 
             if (jsonObject.Keys.Contains("Url"))
@@ -63,6 +65,23 @@ namespace Tasks
             {
                 Title = jsonObject.GetNamedString("Title");
             }
+
+            if (jsonObject.Keys.Contains("Permalink"))
+            {
+                Permalink = jsonObject.GetNamedString("Permalink");
+            }
+
+            return true;
+        }
+
+        public bool TryUrlToUri(out Uri uri)
+        {
+            return Uri.TryCreate(new Uri("https://www.reddit.com"), Url, out uri);
+        }
+
+        public bool TryPermalinkToUri(out Uri uri)
+        {
+            return Uri.TryCreate(new Uri("https://www.reddit.com"), Permalink, out uri);
         }
     }
 }

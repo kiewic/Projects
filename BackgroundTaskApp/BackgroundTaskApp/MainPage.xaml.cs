@@ -73,9 +73,21 @@ namespace BackgroundTaskApp
             string jsonString = parameter as string;
             if (!String.IsNullOrEmpty(jsonString))
             {
-                item.Decode(jsonString);
-                RedditTitleBlock.Text = item.Title;
-                RedditLinkButton.NavigateUri = new Uri(item.Url);
+                if (item.TryParse(jsonString))
+                {
+                    RedditTitleBlock.Text = item.Title;
+
+                    Uri uri;
+                    if (item.TryUrlToUri(out uri))
+                    {
+                        RedditLinkButton.NavigateUri = uri;
+                    }
+
+                    if (item.TryPermalinkToUri(out uri))
+                    {
+                        RedditCommentsButton.NavigateUri = uri;
+                    }
+                }
             }
         }
 
