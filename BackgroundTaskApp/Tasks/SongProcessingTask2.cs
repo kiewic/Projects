@@ -244,12 +244,16 @@ namespace Tasks
             toastNode.Attributes.SetNamedItem(launchAttribute);
 
             XmlNodeList toastImageAttributes = toastXml.GetElementsByTagName("image");
-            //((XmlElement)toastImageAttributes[0]).SetAttribute("src", "ms-appx:///Assets/kiewic.png");
             if (!String.IsNullOrEmpty(item.Thumbnail))
             {
                 ((XmlElement)toastImageAttributes[0]).SetAttribute("src", item.Thumbnail);
             }
             ((XmlElement)toastImageAttributes[0]).SetAttribute("alt", "red graphic");
+
+            // Silent sound.
+            XmlElement audio = toastXml.CreateElement("audio");
+            audio.SetAttribute("silent", "true");
+            toastNode.AppendChild(audio);
 
             // Create a toast from the Xml, then create a ToastNotifier object to show the toast
             Debug.WriteLine(toastXml.GetXml());
