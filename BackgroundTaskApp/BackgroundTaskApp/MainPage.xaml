@@ -16,13 +16,13 @@
             <Setter Property="FontSize" Value="28" />
         </Style>
         <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="26" />
+            <Setter Property="FontSize" Value="24" />
             <Setter Property="IsTextSelectionEnabled" Value="True" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="26" />
+            <Setter Property="FontSize" Value="24" />
         </Style>
         <Style TargetType="Border">
             <Setter Property="BorderThickness" Value="1" />
@@ -48,7 +48,6 @@
                             <TextBlock x:Name="RedditTitleBlock" FontSize="40" IsTextSelectionEnabled="False">@#$%^</TextBlock>
                         </HyperlinkButton>
                     </Grid>
-                    <Button x:Name="InvokeToast" Click="InvokeToast_Click">Invoke Toast</Button>
                     <Button x:Name="RunBackgroundTaskCode" Click="RunBackgroundTaskCode_Click">Run Background Task Code</Button>
                     <Button x:Name="GetCurrentDownloads" Click="GetCurrentDownloads_Click">GetCurrentDownloadsAsync</Button>
                     <Button x:Name="AttachDownloads" Click="AttachDownloads_Click">GetCurrentDownloadsAsync + AttachAsync</Button>
@@ -64,13 +63,13 @@
                         <Button x:Name="Cancel" Click="Cancel_Click">Cancel</Button>
                     </StackPanel>
                     <Border>
-                        <TextBlock x:Name="ProgressBlock">...</TextBlock>
+                        <TextBlock x:Name="StartBlock" ToolTipService.ToolTip="Start">...</TextBlock>
                     </Border>
                     <Border>
-                        <TextBlock x:Name="DownloadBlock">...</TextBlock>
+                        <TextBlock x:Name="ProgressBlock" ToolTipService.ToolTip="Progress">...</TextBlock>
                     </Border>
                     <Border>
-                        <TextBlock x:Name="HeadersBlock">...</TextBlock>
+                        <TextBlock x:Name="HeadersBlock" ToolTipService.ToolTip="Headers">...</TextBlock>
                     </Border>
                 </StackPanel>
             </Border>
@@ -88,13 +87,13 @@
                         <Button x:Name="OnlyIfCachedGetAsync" Click="OnlyIfCachedGetAsync_Click">only-if-cached + GetAsync</Button>
                     </StackPanel>
                     <Border>
-                        <TextBlock x:Name="ExceptionBlock">...</TextBlock>
+                        <TextBlock x:Name="ResponseHeadersBlock" ToolTipService.ToolTip="Respnse Headers">...</TextBlock>
                     </Border>
                     <Border>
-                        <TextBlock x:Name="CertErrorsBlock">...</TextBlock>
+                        <TextBlock x:Name="CertErrorsBlock" ToolTipService.ToolTip="Cert Errors">...</TextBlock>
                     </Border>
                     <Border>
-                        <TextBlock x:Name="ResponseContentBlock">...</TextBlock>
+                        <TextBlock x:Name="ResponseContentBlock" ToolTipService.ToolTip="Response Content">...</TextBlock>
                     </Border>
                 </StackPanel>
             </Border>

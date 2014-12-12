@@ -91,12 +91,6 @@ namespace BackgroundTaskApp
             }
         }
 
-        private void InvokeToast_Click(object sender, RoutedEventArgs e)
-        {
-            SongProcessingTask2 task = new SongProcessingTask2();
-            task.InvokeSimpleToast();
-        }
-
         private async void RunBackgroundTaskCode_Click(object sender, RoutedEventArgs e)
         {
             SongProcessingTask2 task = new SongProcessingTask2();
@@ -225,7 +219,7 @@ namespace BackgroundTaskApp
                 downloadCancellationTokenSource = new CancellationTokenSource();
 
                 ProgressBlock.Text = String.Empty;
-                DownloadBlock.Text = String.Format("Guid: {0}\r\nPath: {1}", slowDownload.Guid, file.Path);
+                StartBlock.Text = String.Format("Guid: {0}\r\nPath: {1}", slowDownload.Guid, slowDownload.ResultFile.Path);
                 HeadersBlock.Text = String.Empty;
 
                 Progress<DownloadOperation> progressCallback = new Progress<DownloadOperation>(OnDownloadProgress);
@@ -264,6 +258,9 @@ namespace BackgroundTaskApp
             StringBuilder builder = new StringBuilder();
             ResponseInformation response = slowDownload.GetResponseInformation();
 
+            // Append Task.Status.
+            builder.Append(String.Format("Status: {0}\r\n", task.Status));
+
             // If server never replied, 'response' is null.
             if (response != null)
             {
@@ -280,22 +277,14 @@ namespace BackgroundTaskApp
             string exceptionInfo = String.Empty;
             if (task.Exception != null)
             {
-                exceptionInfo = String.Format(
-                    "0x{0:X8} {1}",
+                builder.Append(String.Format(
+                    "Exception: 0x{0:X8} {1}\r\n",
                     task.Exception.HResult,
-                    task.Exception.Message);
+                    task.Exception.Message));
             }
 
-            // Format download info.
-            string downloadInfo = String.Format(
-                "Guid: {0}\r\nStatus: {1}\r\nException: {2}",
-                slowDownload.Guid,
-                task.Status,
-                exceptionInfo);
-
             var notAwaited = Dispatcher.RunAsync(CoreDispatcherPriority.High, () => {
-                DownloadBlock.Text = downloadInfo;
-                HeadersBlock.Text = builder.ToString();
+                HeadersBlock.Text = builder.ToString().Trim();
             });
         }
 
@@ -374,7 +363,7 @@ namespace BackgroundTaskApp
 
         private async void DoGet(bool ignoreCertErrors, string key, string value, string friendlyName)
         {
-            ExceptionBlock.Text = String.Empty;
+            ResponseHeadersBlock.Text = String.Empty;
             CertErrorsBlock.Text = String.Empty;
             ResponseContentBlock.Text = String.Empty;
 
@@ -390,6 +379,7 @@ namespace BackgroundTaskApp
                 if (ignoreCertErrors)
                 {
                     filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Untrusted);
+                    filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.InvalidName);
                     filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.RevocationFailure);
                 }
 
@@ -410,12 +400,12 @@ namespace BackgroundTaskApp
 
                 HttpResponseMessage response = await client.SendRequestAsync(request);
 
-                ExceptionBlock.Text = response.ReasonPhrase;
+                ResponseHeadersBlock.Text = response.ReasonPhrase;
                 ResponseContentBlock.Text = await response.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {
-                ExceptionBlock.Text = ex.ToString();
+                ResponseHeadersBlock.Text = ex.ToString();
 
                 // Something like: 'Untrusted, InvalidName, RevocationFailure'
                 CertErrorsBlock.Text = String.Join(
