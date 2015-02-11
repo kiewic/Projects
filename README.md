@@ -85,3 +85,8 @@ A C# Console App to verify that Background Transfer is not supported on desktop 
 
 * Secondary tiles.
 * Tile updates containing XML for multiple sizes.
+
+## Scripts
+
+* `notepadAlias.cmd` creates a command line alias, so `np` opens Notepad++.
+* `registerNotepadAlias.cmd` registers `notepadAlias.cmd` to be executed at each command line start.
