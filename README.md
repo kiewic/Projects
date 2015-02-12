@@ -67,6 +67,12 @@ Sample of how to use cache with System.Net.Http.HttpClient. Only available from 
 * WaitForSingleObject
 * ReleaseMutex
 
+## ThreadsExample
+
+* CreateThread
+* CoWaitForMultipleObjects
+* CloseHandle
+
 ## BackgroundTaskApp
 
 A C# Windows Store App to test:
