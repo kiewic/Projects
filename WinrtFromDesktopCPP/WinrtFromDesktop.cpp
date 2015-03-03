@@ -9,7 +9,7 @@
 #include <windows.foundation.h>
 #include <windows.storage.h>
 #include <windows.web.syndication.h>
-#include <wrl/client.h>
+#include <wrl/client.h> // ComPtr
 #include <wrl/event.h> // Callback.
 #include <wrl/wrappers/corewrappers.h> // HString and HStringReference.
 
@@ -18,7 +18,7 @@
 using namespace ABI::Windows::Data::Json;
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::Web::Syndication;
-using namespace Microsoft::WRL::Wrappers;
+using namespace Microsoft::WRL::Wrappers; // HStringReference
 
 HRESULT LoadFeed()
 {

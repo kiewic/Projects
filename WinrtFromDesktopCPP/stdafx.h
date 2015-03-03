@@ -14,7 +14,7 @@
 #include <wrl/implements.h>
 
 using namespace ABI::Windows::Foundation;
-using namespace Microsoft::WRL;
+using namespace Microsoft::WRL; // ComPtr
 
 #include "Common.h"
 
