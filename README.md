@@ -7,6 +7,8 @@ The following projects are about sockets (a lot of sockets!!) and they can commu
 * WindowsStoreSocketsCPP | C++/CX | Windows.Networking.Sockets
 * WindowsStoreSocketsCS | C# | Windows.Networking.Sockets
 
+[Read More](./ReadMeForSockets.md)
+
 ## Win32Sockets
 
 * DNS Lookup
