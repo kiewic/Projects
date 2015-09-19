@@ -9,6 +9,7 @@
 #include <windows.foundation.h>
 #include <windows.storage.h>
 #include <windows.web.syndication.h>
+#include <windows.devices.wifidirect.h>
 #include <wrl/client.h> // ComPtr
 #include <wrl/event.h> // Callback.
 #include <wrl/wrappers/corewrappers.h> // HString and HStringReference.
@@ -18,7 +19,29 @@
 using namespace ABI::Windows::Data::Json;
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::Web::Syndication;
+using namespace ABI::Windows::Devices::WiFiDirect;
 using namespace Microsoft::WRL::Wrappers; // HStringReference
+
+// Example of how to initialize a Statics class.
+HRESULT WiFiStatics()
+{
+    HRESULT hr;
+
+    HStringReference strDevice(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectDevice);
+
+    ComPtr<IWiFiDirectDeviceStatics> wiFiDirectDeviceStatics;
+    hr = Windows::Foundation::GetActivationFactory(
+        strDevice.Get(),
+        &wiFiDirectDeviceStatics);
+
+    HStringReference deviceId(L"name");
+
+    ComPtr<IWiFiDirectDevice> wiFiDirectDevice;
+    ComPtr<IAsyncOperation<WiFiDirectDevice*>> asyncOperation;
+    hr = wiFiDirectDeviceStatics->FromIdAsync(deviceId.Get(), &asyncOperation);
+
+    return S_OK;
+}
 
 HRESULT LoadFeed()
 {
@@ -33,9 +56,10 @@ HRESULT LoadFeed()
         HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(),
         &storageFileStatics));
 
+    // Sorry, relative paths are not working.
     ComPtr<ABI::Windows::Foundation::IAsyncOperation<StorageFile*>> getFileFromPathOperation;
     IfFailedReturn(storageFileStatics->GetFileFromPathAsync(
-        HStringReference(L"c:\\Users\\Gilberto\\Downloads\\feed.xml").Get(),
+        HStringReference(L"C:\\Users\\Gilberto\\repos\\Projects\\WinrtFromDesktopCPP\\Debug\\feed.xml").Get(),
         &getFileFromPathOperation));
 
     //ComPtr<IAsyncOperationCompletedHandler<StorageFile*>>
@@ -158,11 +182,31 @@ HRESULT TestJson()
 class AutoRoUninitialize
 {
 public:
+    AutoRoUninitialize() : initialized(false)
+    {
+    }
+
+    HRESULT Initialize()
+    {
+        // Prior to using Windows Rutnime, the new thread must first enter an apartment by calling the following function.
+        HRESULT hr = ::RoInitialize(RO_INIT_MULTITHREADED);
+        if (SUCCEEDED(hr))
+        {
+            initialized = true;
+        }
+        return hr;
+    }
+
     ~AutoRoUninitialize()
     {
-        // Closes Windows Runtime in the current thread.
-        RoUninitialize();
+        if (initialized)
+        {
+            // Closes Windows Runtime in the current thread.
+            ::RoUninitialize();
+        }
     }
+private:
+    bool initialized;
 };
 
 HRESULT GorillasTest()
@@ -188,12 +232,12 @@ int wmain(int argc, wchar_t* argv [])
 {
     HRESULT hr;
     AutoRoUninitialize autoRoUninitialize;
+    IfFailedReturn(autoRoUninitialize.Initialize());
 
     UNREFERENCED_PARAMETER(argc);
     UNREFERENCED_PARAMETER(argv);
 
-    // Prior to using Windows Rutnime, the new thread must first enter an apartment by calling the following function.
-    IfFailedReturn(::RoInitialize(RO_INIT_MULTITHREADED));
+    IfFailedReturn(WiFiStatics());
 
     IfFailedReturn(GorillasTest());
 

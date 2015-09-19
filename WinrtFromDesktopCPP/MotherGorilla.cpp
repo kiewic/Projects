@@ -15,11 +15,11 @@ HRESULT MotherGorilla::CreateBaby(_Outptr_ BabyGorilla** baby)
     ComPtr<BabyGorilla> localBaby;
     IfFailedReturn(MakeAndInitialize<BabyGorilla>(&localBaby, this));
 
-    ComPtr<IWeakReference> weakReaference;
-
     AsWeak(localBaby.Get(), &this->baby);
 
     // BabyGorilla class requires a UUID, otherwise WeakRef::CopyTo() fails with
     // "error C2787: 'BabyGorilla' : no GUID has been associated with this object"
-    return this->baby.CopyTo<BabyGorilla>(baby);
+    //return localBaby.CopyTo<BabyGorilla>(baby);
+
+    *baby = localBaby.Detach();
 }

@@ -5,10 +5,11 @@
 #define IfFailedReturn(x) \
 do \
 { \
-if (FAILED(x)) \
+    hr = x; \
+    if (FAILED(hr)) \
     { \
-    DebugBreak(); \
-    return hr; \
+        DebugBreak(); \
+        return hr; \
     } \
 } while (0)
 

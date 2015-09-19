@@ -26,7 +26,7 @@ More at http://monkeyweekend.wordpress.com/2013/10/27/set-a-breakpoint-that-brea
 
 ## WinrtFromDesktop
 
-Samples of how to call Windows Runtime projects from Desktop apps.
+Samples of how to call Windows Runtime projects from Desktop apps using WRL.
 
 ## CacheConsoleApp
 

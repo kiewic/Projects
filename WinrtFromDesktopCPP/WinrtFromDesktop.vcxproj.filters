@@ -51,4 +51,7 @@
   <ItemGroup>
     <Text Include="ReadMe.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="feed.xml" />
+  </ItemGroup>
 </Project>
