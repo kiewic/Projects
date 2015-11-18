@@ -67,3 +67,7 @@ A C# Console App to verify that Background Transfer is not supported on desktop 
 
 * `notepadAlias.cmd` creates a command line alias, so `np` opens Notepad++.
 * `registerNotepadAlias.cmd` registers `notepadAlias.cmd` to be executed at each command line start.
+
+## SChannelSample
+
+* Secure Channel exercise is incomplete.
