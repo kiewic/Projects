@@ -1,0 +1,34 @@
+
+    HRESULT hr;
+
+    DWORD id = MFASYNC_CALLBACK_QUEUE_UNDEFINED;
+    hr = MFLockSharedWorkQueue(L"", 0, nullptr, &id);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    // TODO: Validate errors.
+    // TODO: Release FooIoContext.
+    this->context = new FooIoContext();
+    IMFAsyncCallback* callback;
+    hr = context->QueryInterface(IID_PPV_ARGS(&callback));
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    IMFAsyncResult* asyncResult; // TODO: free.
+    hr = MFCreateAsyncResult(nullptr, callback, nullptr, &asyncResult);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    hr = MFPutWorkItemEx2(id, 0, asyncResult);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    MFASYNCRESULT* mfResult = static_cast<MFASYNCRESULT*>(asyncResult);
+    this->overlapped = mfResult->overlapped;

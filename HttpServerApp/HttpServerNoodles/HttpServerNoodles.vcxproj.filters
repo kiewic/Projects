@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>ad518e57-4316-4867-b3e8-3121949c5f70</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="HttpServer.cpp" />
+    <ClCompile Include="WinSockInitialization.cpp" />
+    <ClCompile Include="HttpServerNoodlesUtils.cpp" />
+    <ClCompile Include="AutoSOCKET.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="HttpServer.h" />
+    <ClInclude Include="WinSockInitialization.h" />
+    <ClInclude Include="HttpServerNoodlesUtils.h" />
+    <ClInclude Include="AutoSOCKET.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="randomStuff.txt" />
+  </ItemGroup>
+</Project>
